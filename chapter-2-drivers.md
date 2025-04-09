@@ -12,7 +12,7 @@ Common interfaces for drivers are `IMessageDriver<TMessage>` and `IInOutDriver`.
 * The `IInOutDriver` can read and write variables on a server. A typical protocol is OPC UA. 
 
 ## Simulated InOutDriver
-You will start with the ColorizingCell. Since the cell isn't finished yet, the manufacturer wants you to [simulate](https://git-ctvc.europe.phoenixcontact.com/moryx/moryx-simulation/-/blob/dev/docs/tutorials/how_to_simulate_my_production.md) the communication first. 
+You will start with the ColorizingCell. Since the cell isn't finished yet, the manufacturer wants you to simulate the communication first.
 
 Use the CLI to add the Colorizing step to the project.
 ```

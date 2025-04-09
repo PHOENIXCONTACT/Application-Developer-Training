@@ -31,7 +31,7 @@ using the provided name and optionally takes additional parameters like `--steps
 command:
 
 ```
-$ moryx new <NAME> --steps <LIST-OF-STEPS> --products <LIST-OF-PRODUCTS>
+$ moryx new <NAME> --steps <LIST-OF-STEPS> --products <LIST-OF-PRODUCTS> --template-url <URL> --branch <NAME>
 ```
 
 Considering *Pencilla Inc.* to apply MORYX to the whole factory, you decide to
@@ -44,7 +44,7 @@ only the `Assembling` step should be covered by MORYX. These information result
 in the following command:
 
 ```
-$ moryx new PencilFactory --steps Assembling --products GraphitePencil
+$ moryx new PencilFactory --steps Assembling --products GraphitePencil --template-url https://git-go.europe.phoenixcontact.com/moryx/moryx-template.git --branch moryx
 ```
 
 This should not only leave you with a solution `PencilFactory.sln` inside
@@ -181,8 +181,8 @@ similar to the image below.
 
 ![Products list](./chapter-1/productList.PNG)
 
-Now you should have your products `100001-00 Brown Pencil GP-1B` and 
-`100002-00 Green Pencil GP-HB`. 
+Now you should have your products `100001-00 Green Pencil GP-1B` and 
+`100002-00 Brown Pencil BP-HB`. 
 The next challenge is to actually let a resource produce the pencils. So far there is 
 no script that describes how the pencils are produced. 
 Therefore, the next step is to model a resource after which we can create a **Recipe** and a 
@@ -251,6 +251,8 @@ button and selecting the required cell.
 > **Note** Make sure to deselect all cells before adding more, so that they will
 > be added to the root level and not as children of other resources. Even though,
 > that wouldn't do any harm.
+
+> **Note** Should these resources not appear, check if the project references of 'PencilFactory.App' include 'PencilFactory.Resources.Assembling'
 
 ![Create resources](./chapter-1/create-resources.png)
 
@@ -487,3 +489,21 @@ They ship with developer licenses, that need to be activated:
 * Drag & Drop the `.WibuCmRau` files onto it
   
 ![Activate developer licenses](./chapter-1/drag-licenses.png)
+
+### Encountering database issues after setup section
+
+If you encounter issues when opening Products or Resources for the first time at the end of the setup,
+consider checking the databases in the command center.
+
+Possible issues from missing databases are:
+- Something went wrong on the server.
+- The connection to the server could not be established. Please check your network connection or try again later.
+
+#### Step 1: Open the Command Center
+![Open the Command Center](./chapter-1/commandCenter.png)
+
+#### Step 2: Check the databases and create missing ones
+![2. Check the databases and create missing ones](./chapter-1/commandCenterDB.png)
+
+#### Step 3: Reincarnate the failed services
+![3. Reincarnate the failed services](./chapter-1/commandCenterModules.png)
