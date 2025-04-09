@@ -252,8 +252,6 @@ button and selecting the required cell.
 > be added to the root level and not as children of other resources. Even though,
 > that wouldn't do any harm.
 
-> **Note** Should these resources not appear, check if the project references of 'PencilFactory.App' include 'PencilFactory.Resources.Assembling'
-
 ![Create resources](./chapter-1/create-resources.png)
 
 In the following dialog it is ok to go with just the typename as the cell 
