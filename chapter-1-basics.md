@@ -31,7 +31,7 @@ using the provided name and optionally takes additional parameters like `--steps
 command:
 
 ```
-$ moryx new <NAME> --steps <LIST-OF-STEPS> --products <LIST-OF-PRODUCTS>
+$ moryx new <NAME> --steps <LIST-OF-STEPS> --products <LIST-OF-PRODUCTS> --template-url <URL> --branch <NAME>
 ```
 
 Considering *Pencilla Inc.* to apply MORYX to the whole factory, you decide to
@@ -44,7 +44,7 @@ only the `Assembling` step should be covered by MORYX. These information result
 in the following command:
 
 ```
-$ moryx new PencilFactory --steps Assembling --products GraphitePencil
+$ moryx new PencilFactory --steps Assembling --products GraphitePencil --template-url https://git-go.europe.phoenixcontact.com/moryx/moryx-template.git --branch moryx
 ```
 
 This should not only leave you with a solution `PencilFactory.sln` inside
