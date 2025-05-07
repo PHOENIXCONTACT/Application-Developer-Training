@@ -31,7 +31,7 @@ For a protocol like that the `IInOutDriver` makes the most sense. Open the Color
 
 ```cs
 [ResourceRegistration]
-public class Colorizing : Cell
+public class ColorizingCell : Cell
 {
     private const string ProcessStart = "ProcessStart";
     private const string ProcessResult = "ProcessResult";
@@ -77,9 +77,9 @@ protected override void OnInitialize()
 In the method `OnInputChanged` you will check, if the value of `Ready` has changed. If it is true, send a `ReadyToWork` to the ProcessEngine.
 
 ```cs
-private void OnInputChanged(object sender, InputChangedEventArgs e)
+private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
-    if (e.Key.Equals(ReadyToWork) && _driver.Input[ReadyToWork] && !(_currentSession is ActivityStart))
+    if (args.Key.Equals(ReadyToWork) && _driver.Input[ReadyToWork] && !(_currentSession is ActivityStart))
     {
         var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
         _currentSession = rtw;
@@ -93,10 +93,10 @@ private void OnInputChanged(object sender, InputChangedEventArgs e)
 If the changed input is `ProcessResult`, read the result from the input and publish it as `ActivityCompleted`. Also set the input `ProcessStart` back to false, so that the physical cell is able to detect when to start the next process. If you don't reset the value of `ProcessStart`, the physical cell is not able to recognize the specific moment an activity should start. Some physical cells also only recognize rising or falling edges. Constant values would trigger nothing.
 
 ```cs
-private void OnInputChanged(object sender, InputChangedEventArgs e)
+private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
     ...
-    else if (e.Key.Equals(ProcessResult) && _currentSession is ActivityStart activitySession)
+    else if (args.Key.Equals(ProcessResult) && _currentSession is ActivityStart activitySession)
     {
         _driver.Output[ProcessStart] = false;
         var processResult = _driver.Input[ProcessResult];
@@ -144,7 +144,7 @@ public override IEnumerable<Session> ControlSystemAttached()
 }
 ```
 
-Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources`, which is derived from `SimulatedInOutDriver<bool, bool>` and add the constants for the variable names. 
+Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver<bool, bool>` and add the constants for the variable names. 
 
 ```cs
 [ResourceRegistration]
@@ -214,11 +214,3 @@ Then create a new workplan containing both steps and add it through a recipe to 
 ![Complete workplan](./chapter-2/CompleteWorkplan.png)
 
 Now you should be able to start a new production.
-
-
-
-
-
-
-
-

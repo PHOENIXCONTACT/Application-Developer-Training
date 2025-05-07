@@ -35,6 +35,10 @@ public class ColorizingCell : Cell
     ...
 }
 ```
+> Note:
+> The private variable with DataMember attribute the public one attributed with EntrySerialize are separated from each other here.
+> DataMember attibutes are commited to the database before EntrySerialize ones are initialized.
+> Here this would lead to not executing the setter before writing to the database.
 
 For this to work add the property `Color` to the `ColorizingCapabilities` and check if the colors of the provided Capabilities match the ones you need.
 
@@ -168,4 +172,3 @@ public class LaserPrintingCapabilities : PrintingCapabilities
 ```
 
 In this way, it's not possible to change the printing method using the UI.
-
