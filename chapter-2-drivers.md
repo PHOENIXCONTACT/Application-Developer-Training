@@ -45,6 +45,7 @@ public class ColorizingCell : Cell
 ```
 
 In order to recognize, when an input changes, subscribe to that in  `OnInitialize` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
+Adjust the Driver variable and functions to match the following.
 
 ```cs
 private IInOutDriver<bool,bool> _driver;
@@ -75,6 +76,7 @@ protected override void OnInitialize()
 
 
 In the method `OnInputChanged` you will check, if the value of `Ready` has changed. If it is true, send a `ReadyToWork` to the ProcessEngine.
+Replace the contents of the function with the following two code segments.
 
 ```cs
 private void OnInputChanged(object sender, InputChangedEventArgs args)

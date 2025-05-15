@@ -29,7 +29,8 @@ public class ColorizingCell : Cell
 
         Capabilities = new Colorizing​Capabilities { Color = _color };
 
-        ...
+        if (Driver != null)
+            Driver.Input.InputChanged += OnInputChanged;
     }
 
     ...
