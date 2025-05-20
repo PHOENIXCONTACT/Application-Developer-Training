@@ -30,11 +30,14 @@ public class ColorizingCell : Cell
         Capabilities = new Colorizing​Capabilities { Color = _color };
 
         if (Driver != null)
+        {
             Driver.Input.InputChanged += OnInputChanged;
+        }
     }
 
     ...
 }
+
 ```
 > Note:
 > The private variable with DataMember attribute the public one attributed with EntrySerialize are separated from each other here.
