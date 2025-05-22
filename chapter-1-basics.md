@@ -47,12 +47,8 @@ in the following command:
 $ moryx new PencilFactory --steps Assembling --products GraphitePencil --branch adp
 ```
 
-> NOTE:
-> For this training we use a custom template.
-> It is tailored to this demonstration scenario.
->
-> For real world applications usually the 'branch' is not listed.
-> But some scenarios may benefit from using a specialized template.
+> *Note:* For this training a custom template exists that is tailored to this scenario. It is selected by the branch parameter here.
+> For real world applications usually the 'branch' is not listed. This creates a more complex project, that is closer to typical usecases.
 
 This should not only leave you with a solution `PencilFactory.sln` inside
 the new folder `PencilFactory`. It also does some initial configuration
@@ -63,7 +59,7 @@ you run the app, you might need to [install licenses](#encountering-wupiexceptio
 
 Run the application (press `F5`).
 
-> *Note* Starting it for the first time will restore NuGet packages.That can 
+> *Note:* Starting it for the first time will restore NuGet packages.That can 
 > take a few minutes.
 
 ![Application dashboard](./chapter-1/HomePageOfPencilApp.PNG)
