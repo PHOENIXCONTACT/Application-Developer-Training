@@ -47,8 +47,8 @@ in the following command:
 $ moryx new PencilFactory --steps Assembling --products GraphitePencil --branch adp
 ```
 
-> *Note:* For this training a custom template exists that is tailored to this scenario. It is selected by the branch parameter here.
-> For real world applications usually the 'branch' is not listed. This creates a more complex project, that is closer to typical usecases.
+> **Note** This training uses a simplified application template that is tailored to this scenario. It is provided by the --branch parameter here.
+> For real world applications you would probably omit --branch for a more advanced default setup or customize it to your needs (see [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or moryx --help for more information).
 
 This should not only leave you with a solution `PencilFactory.sln` inside
 the new folder `PencilFactory`. It also does some initial configuration
@@ -59,7 +59,7 @@ you run the app, you might need to [install licenses](#encountering-wupiexceptio
 
 Run the application (press `F5`).
 
-> *Note:* Starting it for the first time will restore NuGet packages.That can 
+> **Note** Starting it for the first time will restore NuGet packages.That can 
 > take a few minutes.
 
 ![Application dashboard](./chapter-1/HomePageOfPencilApp.PNG)
@@ -149,7 +149,7 @@ To create a product, you need to run the application now and head to the
 Click on the plus button to open the 'Product Importer' menu. This title may 
 sound a bit confusing, but it lets you add new products. 
 
-> *Note* The naming here comes from the fact, that you wouldn't necessarily add
+> **Note** The naming here comes from the fact, that you wouldn't necessarily add
 > products here, but 'import' them from other systems.
 
 ![New product](./chapter-1/create-product.png)
