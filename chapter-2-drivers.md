@@ -16,7 +16,7 @@ You will start with the ColorizingCell. Since the cell isn't finished yet, the m
 
 Use the CLI to add the Colorizing step to the project.
 ```
-moryx add step Colorizing
+$ moryx add step Colorizing
 ```
 Now, in order to use simulation, add the package `Moryx.Drivers.Simulation` to the project `PencilFactory.Resources`.
 
@@ -58,7 +58,9 @@ public IInOutDriver<bool, bool> Driver
     {
         _driver = value;
         if (_driver != null)
+        {
             _driver.Input.InputChanged += OnInputChanged;
+        }
     }
 }
 ```
@@ -69,7 +71,9 @@ protected override void OnInitialize()
     ...
 
     if (_driver != null)
+    {
         _driver.Input.InputChanged += OnInputChanged;
+    }
 }
 ```
 
@@ -184,9 +188,13 @@ protected override void OnOutputSet(object sender, string key)
     {
         SimulatedInput.Values[ReadyToWork] = false;
         if (SimulatedOutput.Values[ProcessStart])
+        {
             SimulatedState = SimulationState.Executing;
+        }
         else
+        {
             SimulatedState = SimulationState.Idle;
+        }
     } 
 }
 ```

@@ -106,7 +106,7 @@ From the details above, the `GraphitePencilType` needs
 You will find the `GraphitePencilType` among all other `<Product>Types` in the
 `PencilFactory` package within the `Products` folder.
 
-For properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/Core/Serialization/EntryConvert.md#entryserialize-attribute)
+Paste the following code and for properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/Core/Serialization/EntryConvert.md#entryserialize-attribute)
 attribute. For properties to be saved in the database, use the [DataMember](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute?view=net-7.0) attribute.
 
 ``` cs
