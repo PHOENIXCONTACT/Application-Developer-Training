@@ -12,11 +12,11 @@ Common interfaces for drivers are `IMessageDriver<TMessage>` and `IInOutDriver`.
 * The `IInOutDriver` can read and write variables on a server. A typical protocol is OPC UA. 
 
 ## Simulated InOutDriver
-You will start with the ColorizingCell. Since the cell isn't finished yet, the manufacturer wants you to [simulate](https://git-ctvc.europe.phoenixcontact.com/moryx/moryx-simulation/-/blob/dev/docs/tutorials/how_to_simulate_my_production.md) the communication first. 
+You will start with the ColorizingCell. Since the cell isn't finished yet, the manufacturer wants you to simulate the communication first.
 
 Use the CLI to add the Colorizing step to the project.
 ```
-moryx add step Colorizing
+$ moryx add step Colorizing
 ```
 Now, in order to use simulation, add the package `Moryx.Drivers.Simulation` to the project `PencilFactory.Resources`.
 
@@ -31,7 +31,7 @@ For a protocol like that the `IInOutDriver` makes the most sense. Open the Color
 
 ```cs
 [ResourceRegistration]
-public class Colorizing : Cell
+public class ColorizingCell : Cell
 {
     private const string ProcessStart = "ProcessStart";
     private const string ProcessResult = "ProcessResult";
@@ -45,6 +45,7 @@ public class Colorizing : Cell
 ```
 
 In order to recognize, when an input changes, subscribe to that in  `OnInitialize` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
+Adjust the Driver variable and functions to match the following.
 
 ```cs
 private IInOutDriver<bool,bool> _driver;
@@ -57,7 +58,9 @@ public IInOutDriver<bool, bool> Driver
     {
         _driver = value;
         if (_driver != null)
+        {
             _driver.Input.InputChanged += OnInputChanged;
+        }
     }
 }
 ```
@@ -68,18 +71,21 @@ protected override void OnInitialize()
     ...
 
     if (_driver != null)
+    {
         _driver.Input.InputChanged += OnInputChanged;
+    }
 }
 ```
 
 
 
 In the method `OnInputChanged` you will check, if the value of `Ready` has changed. If it is true, send a `ReadyToWork` to the ProcessEngine.
+Replace the contents of the function with the following two code segments.
 
 ```cs
-private void OnInputChanged(object sender, InputChangedEventArgs e)
+private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
-    if (e.Key.Equals(ReadyToWork) && _driver.Input[ReadyToWork] && !(_currentSession is ActivityStart))
+    if (args.Key.Equals(ReadyToWork) && _driver.Input[ReadyToWork] && !(_currentSession is ActivityStart))
     {
         var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
         _currentSession = rtw;
@@ -93,10 +99,10 @@ private void OnInputChanged(object sender, InputChangedEventArgs e)
 If the changed input is `ProcessResult`, read the result from the input and publish it as `ActivityCompleted`. Also set the input `ProcessStart` back to false, so that the physical cell is able to detect when to start the next process. If you don't reset the value of `ProcessStart`, the physical cell is not able to recognize the specific moment an activity should start. Some physical cells also only recognize rising or falling edges. Constant values would trigger nothing.
 
 ```cs
-private void OnInputChanged(object sender, InputChangedEventArgs e)
+private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
     ...
-    else if (e.Key.Equals(ProcessResult) && _currentSession is ActivityStart activitySession)
+    else if (args.Key.Equals(ProcessResult) && _currentSession is ActivityStart activitySession)
     {
         _driver.Output[ProcessStart] = false;
         var processResult = _driver.Input[ProcessResult];
@@ -144,7 +150,7 @@ public override IEnumerable<Session> ControlSystemAttached()
 }
 ```
 
-Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources`, which is derived from `SimulatedInOutDriver<bool, bool>` and add the constants for the variable names. 
+Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver<bool, bool>` and add the constants for the variable names. 
 
 ```cs
 [ResourceRegistration]
@@ -182,9 +188,13 @@ protected override void OnOutputSet(object sender, string key)
     {
         SimulatedInput.Values[ReadyToWork] = false;
         if (SimulatedOutput.Values[ProcessStart])
+        {
             SimulatedState = SimulationState.Executing;
+        }
         else
+        {
             SimulatedState = SimulationState.Idle;
+        }
     } 
 }
 ```
@@ -214,11 +224,3 @@ Then create a new workplan containing both steps and add it through a recipe to 
 ![Complete workplan](./chapter-2/CompleteWorkplan.png)
 
 Now you should be able to start a new production.
-
-
-
-
-
-
-
-

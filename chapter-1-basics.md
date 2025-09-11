@@ -44,8 +44,11 @@ only the `Assembling` step should be covered by MORYX. These information result
 in the following command:
 
 ```
-$ moryx new PencilFactory --steps Assembling --products GraphitePencil
+$ moryx new PencilFactory --steps Assembling --products GraphitePencil --branch adp
 ```
+
+> **Note** This training uses a simplified application template that is tailored to this scenario. It is provided by the --branch parameter here.
+> For real world applications you would probably omit --branch for a more advanced default setup or customize it to your needs (see [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or moryx --help for more information).
 
 This should not only leave you with a solution `PencilFactory.sln` inside
 the new folder `PencilFactory`. It also does some initial configuration
@@ -56,7 +59,7 @@ you run the app, you might need to [install licenses](#encountering-wupiexceptio
 
 Run the application (press `F5`).
 
-> *Note* Starting it for the first time will restore NuGet packages.That can 
+> **Note** Starting it for the first time will restore NuGet packages.That can 
 > take a few minutes.
 
 ![Application dashboard](./chapter-1/HomePageOfPencilApp.PNG)
@@ -103,7 +106,7 @@ From the details above, the `GraphitePencilType` needs
 You will find the `GraphitePencilType` among all other `<Product>Types` in the
 `PencilFactory` package within the `Products` folder.
 
-For properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/Core/Serialization/EntryConvert.md#entryserialize-attribute)
+Paste the following code and for properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/Core/Serialization/EntryConvert.md#entryserialize-attribute)
 attribute. For properties to be saved in the database, use the [DataMember](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute?view=net-7.0) attribute.
 
 ``` cs
@@ -146,7 +149,7 @@ To create a product, you need to run the application now and head to the
 Click on the plus button to open the 'Product Importer' menu. This title may 
 sound a bit confusing, but it lets you add new products. 
 
-> *Note* The naming here comes from the fact, that you wouldn't necessarily add
+> **Note** The naming here comes from the fact, that you wouldn't necessarily add
 > products here, but 'import' them from other systems.
 
 ![New product](./chapter-1/create-product.png)
@@ -181,8 +184,8 @@ similar to the image below.
 
 ![Products list](./chapter-1/productList.PNG)
 
-Now you should have your products `100001-00 Brown Pencil GP-1B` and 
-`100002-00 Green Pencil GP-HB`. 
+Now you should have your products `100001-00 Green Pencil GP-1B` and 
+`100002-00 Brown Pencil BP-HB`. 
 The next challenge is to actually let a resource produce the pencils. So far there is 
 no script that describes how the pencils are produced. 
 Therefore, the next step is to model a resource after which we can create a **Recipe** and a 
@@ -219,12 +222,12 @@ Based on these requirements
 
 ### Add worker support
 
-The `AssemblingCell`, which you will find in `PencilFactory.Resources`, 
+The `AssemblingCell`, which you will find in `PencilFactory.Resources.Assembling`, 
 already has an instructor.
 
 ``` cs
 [ResourceReference(ResourceRelationType.Extension)]
-public IVisualInstructor Instructor { get; set; }
+public IVisualInstructor VisualInstructor { get; set; }
 ```
 
 `IVisualInstructor`
@@ -329,7 +332,7 @@ public override void StartActivity(ActivityStart activityStart)
     switch (activityStart.Activity)
     {
         case  AssemblingActivity activity:
-            VisualInstructor.Execute(Name, activityStart, CompleteInstruction);
+            VisualInstructor.Execute(Name, activityStart, InstructionCompleted);
             break;
     }
 }
@@ -341,7 +344,7 @@ have to implement `CompleteInstruction()`, that gets called, when an instruction
 has finished, i.e.: When a worker has finished their task.
 
 ```cs
-private void CompleteInstruction(int instructionResult, ActivityStart activity)
+private void InstructionCompleted(int instructionResult, ActivityStart activity)
 {
     var result = activity.CreateResult(instructionResult);
     _currentSession = result;
@@ -463,7 +466,9 @@ Now the production is running!
 That's it, you should now be able to let the pencils flow through the assembling
 cell.
 
-In order to see the visual instructions, go to the module `Worker Support` and select for VisualInstructor as Display
+In order to see the visual instructions, go to the module `Worker Support`.
+Select VisualInstructor as Display, if this is not already done by default.
+You can manually select it by clicking on the Settings icon at the top right.
 
 ![Select Display](./chapter-1/SelectDisplay.png)
 
@@ -487,3 +492,23 @@ They ship with developer licenses, that need to be activated:
 * Drag & Drop the `.WibuCmRau` files onto it
   
 ![Activate developer licenses](./chapter-1/drag-licenses.png)
+
+### Encountering database issues after setup section
+
+> Something went wrong on the server.
+
+> The connection to the server could not be established. Please check your network connection or try again later.
+
+If you encounter issues when opening Products or Resources for the first time at the end of the setup,
+consider checking the databases in the command center.
+There you may have to create the missing databeses.
+
+If the issue occurs during the APD at a later stage due to messing up the order of stps or making changes to classes, of existing entires, you may also need to delete the DB.
+#### Step 1: Open the Command Center
+![Open the Command Center](./chapter-1/commandCenter.png)
+
+#### Step 2: Check the databases and create missing ones
+![2. Check the databases and create missing ones](./chapter-1/commandCenterDB.png)
+
+#### Step 3: Reincarnate the failed services
+![3. Reincarnate the failed services](./chapter-1/commandCenterModules.png)

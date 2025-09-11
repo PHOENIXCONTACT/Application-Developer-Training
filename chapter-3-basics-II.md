@@ -29,12 +29,20 @@ public class ColorizingCell : Cell
 
         Capabilities = new Colorizing​Capabilities { Color = _color };
 
-        ...
+        if (Driver != null)
+        {
+            Driver.Input.InputChanged += OnInputChanged;
+        }
     }
 
     ...
 }
+
 ```
+> Note:
+> The private variable with DataMember attribute the public one attributed with EntrySerialize are separated from each other here.
+> DataMember attibutes are commited to the database before EntrySerialize ones are initialized.
+> Here this would lead to not executing the setter before writing to the database.
 
 For this to work add the property `Color` to the `ColorizingCapabilities` and check if the colors of the provided Capabilities match the ones you need.
 
@@ -46,8 +54,10 @@ public class ColorizingCapabilities : CapabilitiesBase
     protected override bool ProvidedBy(ICapabilities provided)
     {
         var providedCapabilities​ = provided as Colorizing​Capabilities;
-        if (providedCapabilities​ != null && providedCapabilities​.Color == Color) 
+        if (providedCapabilities​ != null && providedCapabilities​.Color == Color)
+        {
             return true;
+        }
 
         return false;
     }
@@ -144,7 +154,9 @@ public abstract class PrintingCapabilities : CapabilitiesBase
     {
         var providedCapabilities​ = provided as PrintingCapabilities;
         if (providedCapabilities​ != null && providedCapabilities​.Color == Color)
+        {
             return true;
+        }
 
         return false;
     }
@@ -160,7 +172,9 @@ public class LaserPrintingCapabilities : PrintingCapabilities
     {
         var providedColorizing​ = provided as LaserPrintingCapabilities;
         if (providedColorizing​ == null)
+        {
             return false;
+        }
 
         return base.ProvidedBy(provided);
     }
@@ -168,4 +182,3 @@ public class LaserPrintingCapabilities : PrintingCapabilities
 ```
 
 In this way, it's not possible to change the printing method using the UI.
-
