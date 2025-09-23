@@ -179,7 +179,7 @@ public override void Ready(IActivity activity)
 }
 ```
 
-The method `OnOuputSet` gets called when outputs are changed. In this example only the output `ProcessStart` gets set, which would activate the production.
+The method `OnOutputSet` gets called when outputs are changed. In this example only the output `ProcessStart` gets set, which would activate the production.
 
 ```cs
 protected override void OnOutputSet(object sender, string key)
