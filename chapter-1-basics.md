@@ -54,8 +54,7 @@ This should not only leave you with a solution `PencilFactory.sln` inside
 the new folder `PencilFactory`. It also does some initial configuration
 and ships empty databases. 
  
-That means, you can directly open it in Visual Studio and dig into it. Before
-you run the app, you might need to [install licenses](#encountering-wupiexceptions).
+That means, you can directly open it in Visual Studio and dig into it.
 
 Run the application (press `F5`).
 
@@ -215,7 +214,7 @@ the first steps to digitalize their factory:
 
 Based on these requirements
 
-* The cell should display a workersupport screen to the worker
+* The cell should display a worker support screen to the worker
 * Depending on the workers input (*success*, *failure*) the product either moves
   to the next station or goes into a scrap container
 
@@ -316,7 +315,7 @@ thus signal `ReadyToWork` to the ProcessEngine.
   This is typically used to start activities if a product is already 'in' a 
   cell.
 * `ReadyToWorkType.Push` *won't* result in a `SequenceCompleted()`, but would
-  'wait' for an acitvity, like subscribing for push notifications.
+  'wait' for an activity, like subscribing for push notifications.
 * `ActivityClassification.Production` is used to notify that the cell is ready to
  work on an `Activity` of type `production`.
 
@@ -480,19 +479,6 @@ Use the `SUCCESS` and `FAILED` action to make the products flow through the prod
 Here you will find a list of common problems, that might occur, and how to fix
 them. 
 
-### Encountering `WupiException`s
-
->  `WupiException: Der CmContainer-Eintrag wurde nicht gefunden, Fehler 200.`
-
-The application depends on MORYX modules, that are licensed. But no worries:
-They ship with developer licenses, that need to be activated:
-
-* Open *CodeMeter Control Center*, 
-  which you should have installed beforehand through the [CodeMeter User Runtime (Version 8.x)](https://www.wibu.com/de/support/anwendersoftware/anwendersoftware.html)
-* Drag & Drop the `.WibuCmRau` files onto it
-  
-![Activate developer licenses](./chapter-1/drag-licenses.png)
-
 ### Encountering database issues after setup section
 
 > Something went wrong on the server.
@@ -501,9 +487,9 @@ They ship with developer licenses, that need to be activated:
 
 If you encounter issues when opening Products or Resources for the first time at the end of the setup,
 consider checking the databases in the command center.
-There you may have to create the missing databeses.
+There you may have to create the missing databases.
 
-If the issue occurs during the APD at a later stage due to messing up the order of stps or making changes to classes, of existing entires, you may also need to delete the DB.
+If the issue occurs during the APD at a later stage due to messing up the order of steps or making changes to classes, of existing entries, you may also need to delete the DB.
 #### Step 1: Open the Command Center
 ![Open the Command Center](./chapter-1/commandCenter.png)
 

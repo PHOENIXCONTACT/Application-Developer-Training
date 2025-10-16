@@ -1,7 +1,7 @@
 # Basics II - Capabilities and ParameterBinding
 In this chapter you will learn how to find the right Cell depending on a product property.
 
-The manufacturer realised that only one ColorizingCell, in which the paint always has to be changed, isn't really efficient. He decided to add another one. Now for each color there is one cell.
+The manufacturer realized that only one ColorizingCell, in which the paint always has to be changed, isn't really efficient. He decided to add another one. Now for each color there is one cell.
 
 In order to define, which cell uses which color, first add a property `Color` to the ColorizingCell and set the color in the [Capabilities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/Processing/Capabilities.md) to let Moryx know what the cell is capable of. In this case using a specific color. Remember EntrySerialize means the property can be set in the UI by editing the corresponding resource.
 
@@ -41,7 +41,7 @@ public class ColorizingCell : Cell
 ```
 > Note:
 > The private variable with DataMember attribute the public one attributed with EntrySerialize are separated from each other here.
-> DataMember attibutes are commited to the database before EntrySerialize ones are initialized.
+> DataMember attributes are committed to the database before EntrySerialize ones are initialized.
 > Here this would lead to not executing the setter before writing to the database.
 
 For this to work add the property `Color` to the `ColorizingCapabilities` and check if the colors of the provided Capabilities match the ones you need.

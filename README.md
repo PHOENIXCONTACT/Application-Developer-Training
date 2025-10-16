@@ -50,10 +50,6 @@ Before you start, you need the following tools installed on your machine:
 
 * [ ] [Git](https://git-scm.com/)
 * [ ] [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/) (Any version below wouldn't work, but you can install them in parallel)
-* [ ] [CodeMeter User Runtime (Version 8.x)](https://www.wibu.com/de/support/anwendersoftware/anwendersoftware.html)
-
-Find more details on [requirements here](chapter-0-requirements.md).
-
 
 ## [Chapter 1 - Basics](chapter-1-basics.md)
 
