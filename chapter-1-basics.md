@@ -44,7 +44,7 @@ only the `Assembling` step should be covered by MORYX. These information result
 in the following command:
 
 ```
-$ moryx new PencilFactory --steps Assembling --products GraphitePencil --branch adp
+$ moryx new PencilFactory --steps Assembling --products GraphitePencil
 ```
 
 > **Note** This training uses a simplified application template that is tailored to this scenario. It is provided by the --branch parameter here.
