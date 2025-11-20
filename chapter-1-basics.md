@@ -498,3 +498,9 @@ If the issue occurs during the APD at a later stage due to messing up the order 
 
 #### Step 3: Reincarnate the failed services
 ![3. Reincarnate the failed services](./chapter-1/commandCenterModules.png)
+
+### I cannot find a resource in the add dialog
+If you cannot find an expectet Ressource in the "Add Resource" - Dialog, this is usually because the the reference to the corresponding assembly has not been loaded. 
+Moryx use reflection to scan the public classes that inherits from Resource. The Scan is only made for Ressources in the AppDomain (In this case PencilFactory.App)
+
+To fix the problem you should use the UI from Visual Studio and Check the Referece you need. 
