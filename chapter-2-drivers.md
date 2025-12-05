@@ -1,31 +1,36 @@
 # Driver
-In this chapter you will implement the ColorizingCell and the TestingCell. 
-Both of them are automatic cells, which don't need any user interaction. 
+
+In this chapter you will implement the ColorizingCell and the TestingCell.
+Both of them are automatic cells, which don't need any user interaction.
 Correspondingly there are no visual instructions. Instead there is some kind of hardware, which needs to be connected to MORYX.
 
-For the cell to communicate with the hardware a [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/HowToBuildADriver.md) is needed. 
+For the cell to communicate with the hardware a [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/HowToBuildADriver.md) is needed.
 In here the communication is encapsulated.
 
-As there are many different ways to communicate, there are also many different implementations of drivers. 
+As there are many different ways to communicate, there are also many different implementations of drivers.
 Common interfaces for drivers are `IMessageDriver<TMessage>` and `IInOutDriver`.
+
 * The `IMessageDriver<TMessage>` is used for message based protocols. The driver is able to send and receive messages. When a new message is received, an event gets invoked. A typical protocol would be MQTT.
-* The `IInOutDriver` can read and write variables on a server. A typical protocol is OPC UA. 
+* The `IInOutDriver` can read and write variables on a server. A typical protocol is OPC UA.
 
 ## Simulated InOutDriver
+
 You will start with the ColorizingCell. Since the cell isn't finished yet, the manufacturer wants you to simulate the communication first.
 
 Use the CLI to add the Colorizing step to the project.
+
+```bash
+moryx add step Colorizing
 ```
-$ moryx add step Colorizing
-```
+
 Now, in order to use simulation, add the package `Moryx.Drivers.Simulation` to the project `PencilFactory.Resources`.
 
 The ColorizingCell is using a protocol, where it can read and write variables on the physical cell.
 
 1. When the physical cell is ready to work, it will set the input `Ready` to `true`.
-2. The digital twin will send a `ReadyToWork`. 
-3. When the cell receives an activity, set the output `ProcessStart` to `true`. 
-4. Read the result from the input `ProcessResult`. 
+2. The digital twin will send a `ReadyToWork`.
+3. When the cell receives an activity, set the output `ProcessStart` to `true`.
+4. Read the result from the input `ProcessResult`.
 
 For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell and replace the already generated `IMessageDriver` by an `IInOutDriver`. Also add constants for the names of the variables to read and write.
 
@@ -77,8 +82,6 @@ protected override void OnInitialize()
 }
 ```
 
-
-
 In the method `OnInputChanged` you will check, if the value of `Ready` has changed. If it is true, send a `ReadyToWork` to the ProcessEngine.
 Replace the contents of the function with the following two code segments.
 
@@ -115,6 +118,7 @@ private void OnInputChanged(object sender, InputChangedEventArgs args)
 ```
 
 In order to start an activity on the physical cell when an activityStart is received, set `ProcessStart` to `true`.
+
 ```cs
 public override void StartActivity(ActivityStart activityStart)
 {
@@ -150,7 +154,7 @@ public override IEnumerable<Session> ControlSystemAttached()
 }
 ```
 
-Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver<bool, bool>` and add the constants for the variable names. 
+Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver<bool, bool>` and add the constants for the variable names.
 
 ```cs
 [ResourceRegistration]
