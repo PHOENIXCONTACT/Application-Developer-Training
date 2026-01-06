@@ -32,7 +32,7 @@ The ColorizingCell is using a protocol, where it can read and write variables on
 3. When the cell receives an activity, set the output `ProcessStart` to `true`.
 4. Read the result from the input `ProcessResult`.
 
-For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell and replace the already generated `IMessageDriver` by an `IInOutDriver`. Also add constants for the names of the variables to read and write.
+For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell and create an `IInOutDriver`. Also add constants for the names of the variables to read and write.
 
 ```cs
 [ResourceRegistration]
@@ -43,20 +43,20 @@ public class ColorizingCell : Cell
     private const string ReadyToWork = "Ready";
 
     [ResourceReference(ResourceRelationType.Driver)]
-    public IInOutDriver<bool,bool> Driver { get; set; }
+    public IInOutDriver Driver { get; set; }
     
     ...
 }
 ```
 
-In order to recognize, when an input changes, subscribe to that in  `OnInitialize` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
+In order to recognize, when an input changes, subscribe to that in `OnInitialize` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
 Adjust the Driver variable and functions to match the following.
 
 ```cs
-private IInOutDriver<bool,bool> _driver;
+private IInOutDriver _driver;
 
 [ResourceReference(ResourceRelationType.Driver)]
-public IInOutDriver<bool, bool> Driver
+public IInOutDriver Driver
 {
     get { return _driver; }
     set
@@ -88,7 +88,7 @@ Replace the contents of the function with the following two code segments.
 ```cs
 private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
-    if (args.Key.Equals(ReadyToWork) && _driver.Input[ReadyToWork] && !(_currentSession is ActivityStart))
+    if (args.Key.Equals(ReadyToWork) && (bool)args.Value && !(_currentSession is ActivityStart))
     {
         var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
         _currentSession = rtw;
