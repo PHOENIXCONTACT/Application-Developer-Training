@@ -295,16 +295,16 @@ another *sequence* or start a whole new *session* by signaling `ReadyToWork`.
 ![Activities, Sequences and Sessions](./chapter-1/SessionsAndSequences.png)
 
 Now, you will convert theory into practice and begin with starting a *session*.
-To do so, update the `ControlSystemAttached()` method to the following:
+To do so, update the `ProcessEngineAttached()` method to the following: 
 
 ```cs
-public override IEnumerable<Session> ControlSystemAttached()
+public override IEnumerable<Session> ProcessEngineAttached()
 {
     yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
 }
 ```
 
-`ControlSystemAttached()` gets called in the event of the ControlSystem being
+`ProcessEngineAttached()` gets called in the event of the ProcessEngine being 
 attached to the resource, which is, when the application gets started.
 
 In here you will yield return a new session using `Session.StartSession()` and
