@@ -95,7 +95,7 @@ private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
     if (args.Key == ReadyToWork)
     {
-    	if (args.Key.Equals(ReadyToWork) && _driver.Input[ReadyToWork] && !(_currentSession is ActivityStart))
+        if ((bool)Driver.Input[ReadyToWork] && _currentSession is not ActivityStart)
         {
             var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
             _currentSession = rtw;
@@ -165,11 +165,11 @@ public override IEnumerable<Session> ProcessEngineAttached()
 }
 ```
 
-Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver<bool, bool>` and add the constants for the variable names.
+Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver` and add the constants for the variable names. 
 
 ```cs
 [ResourceRegistration]
-public class SimulatedColorizingDriver : SimulatedInOutDriver<bool, bool>
+public class SimulatedColorizingDriver : SimulatedInOutDriver
 {
     private const string ProcessStart = "ProcessStart";
     private const string ProcessResult = "ProcessResult";
@@ -179,7 +179,7 @@ public class SimulatedColorizingDriver : SimulatedInOutDriver<bool, bool>
 }
 ```
 
-A `SimulationDriver` has several states, which are needed in order for the SimulationModule to know what happens. After the system has booted, the driver is in the state `Idle`. Is a product arriving, the cell sends a `ReadyToWork` and the driver changes its state to `Requested`. During production the state is `Executing` and afterward it changes back to `Idle`.
+A `SimulatedInOutDriver` has several states, which are needed in order for the SimulationModule to know what happens. After the system has booted, the driver is in the state `Idle`. Is a product arriving, the cell sends a `Ready` and the driver changes its state to `Requested`. During production the state is `Executing` and afterward it changes back to `Idle`.
 
 ![States of a SimulationDriver](./chapter-2/SimulationStates.png)
 
