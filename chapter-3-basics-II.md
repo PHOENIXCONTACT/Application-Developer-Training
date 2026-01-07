@@ -42,7 +42,7 @@ public class ColorizingCell : Cell
 ```
 
 > Note:
-> The private variable with DataMember attribute the public one attributed with EntrySerialize are separated from each other here.
+> The private variable with DataMember attribute and the public property attributed with EntrySerialize are separated from each other here.
 > DataMember attributes are committed to the database before EntrySerialize ones are initialized.
 > Here this would lead to not executing the setter before writing to the database.
 
