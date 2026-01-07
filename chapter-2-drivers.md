@@ -28,19 +28,19 @@ Now, in order to use simulation, add the package `Moryx.Drivers.Simulation` to t
 The ColorizingCell is using a protocol, where it can read and write variables on the physical cell.
 
 1. When the physical cell is ready to work, it will set the input `Ready` to `true`.
-2. The digital twin will send a `ReadyToWork`.
+2. The digital twin will send a `ReadyToWork` input changed event. 
 3. When the cell receives an activity, set the output `ProcessStart` to `true`.
 4. Read the result from the input `ProcessResult`.
 
-For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell and create an `IInOutDriver`. Also add constants for the names of the variables to read and write.
+For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell and replace the already generated `IMessageDriver` by an `IInOutDriver`. Also add constants for the names of the variables to read and write.
 
 ```cs
 [ResourceRegistration]
-public class ColorizingCell : Cell
+public class ColorizingCell : Cell, IStateContext
 {
     private const string ProcessStart = "ProcessStart";
     private const string ProcessResult = "ProcessResult";
-    private const string ReadyToWork = "Ready";
+    private const string Ready = "Ready";
 
     [ResourceReference(ResourceRelationType.Driver)]
     public IInOutDriver Driver { get; set; }
@@ -49,8 +49,7 @@ public class ColorizingCell : Cell
 }
 ```
 
-In order to recognize, when an input changes, subscribe to that in `OnInitialize` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
-Adjust the Driver variable and functions to match the following.
+In order to recognize, when an input changes, subscribe to that in  `OnInitialize` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell. Adjust the Driver property and functions to match the following.
 
 ```cs
 private IInOutDriver _driver;
@@ -61,8 +60,14 @@ public IInOutDriver Driver
     get { return _driver; }
     set
     {
+        if (_driver?.Input != null)
+        {
+            _driver.Input.InputChanged -= OnInputChanged;
+        }
+
         _driver = value;
-        if (_driver != null)
+
+        if (_driver?.Input != null)
         {
             _driver.Input.InputChanged += OnInputChanged;
         }
@@ -75,7 +80,7 @@ protected override void OnInitialize()
 {
     ...
 
-    if (_driver != null)
+    if (_driver?.Input != null)
     {
         _driver.Input.InputChanged += OnInputChanged;
     }
@@ -88,31 +93,37 @@ Replace the contents of the function with the following two code segments.
 ```cs
 private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
-    if (args.Key.Equals(ReadyToWork) && (bool)args.Value && !(_currentSession is ActivityStart))
+    if (args.Key == ReadyToWork)
     {
-        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
-        _currentSession = rtw;
-        PublishReadyToWork(rtw);
+    	if (args.Key.Equals(ReadyToWork) && _driver.Input[ReadyToWork] && !(_currentSession is ActivityStart))
+        {
+            var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+            _currentSession = rtw;
+            PublishReadyToWork(rtw);
+        }
     }
 
     ...
 }
 ```
 
-If the changed input is `ProcessResult`, read the result from the input and publish it as `ActivityCompleted`. Also set the input `ProcessStart` back to false, so that the physical cell is able to detect when to start the next process. If you don't reset the value of `ProcessStart`, the physical cell is not able to recognize the specific moment an activity should start. Some physical cells also only recognize rising or falling edges. Constant values would trigger nothing.
+If the changed input is `ProcessResult`, read the result from the input and publish it as `ActivityCompleted`. Also set the ouput `ProcessStart` back to false, so that the physical cell is able to detect when to start the next process. If you don't reset the value of `ProcessStart`, the physical cell is not able to recognize the specific moment an activity should start. Some physical cells also only recognize rising or falling edges. Constant values would trigger nothing.
 
 ```cs
 private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
     ...
-    else if (args.Key.Equals(ProcessResult) && _currentSession is ActivityStart activitySession)
+    else if (args.Key == ProcessResult)
     {
-        _driver.Output[ProcessStart] = false;
-        var processResult = _driver.Input[ProcessResult];
+        if (_currentSession is ActivityStart activitySession)
+        {
+            _driver.Output[ProcessStart] = false;
+            var processResult = (bool)_driver.Input[ProcessResult];
 
-        var result = activitySession.CreateResult(processResult ? (int)ColorizingActivityResults.Success : (int)ColorizingActivityResults.Failed);
-        _currentSession = result;
-        PublishActivityCompleted(result);
+            var result = activitySession.CreateResult(processResult ? (int)ColorizingActivityResults.Success : (int)ColorizingActivityResults.Failed);
+            _currentSession = result;
+            PublishActivityCompleted(result);
+        }
     } 
 }
 ```
@@ -125,14 +136,14 @@ public override void StartActivity(ActivityStart activityStart)
     _currentSession = activityStart;
     switch (activityStart.Activity)
     {
-        case Colorizing​Activity activity:
+        case Colorizing​Activity:
             _driver.Output[ProcessStart] = true;
             break;
     }
 }
 ```
 
-The `SessionCompleted` can be implemented in the same way as in the AssemblingCell.
+The `SequenceCompleted` can be implemented in the same way as in the AssemblingCell.
 
 ```cs
 public override void SequenceCompleted(SequenceCompleted completed)
@@ -145,10 +156,10 @@ public override void SequenceCompleted(SequenceCompleted completed)
 }
 ```
 
-The same applies for `ControlSystemAttached`.
+The same applies for `ProcessEngineAttached`.
 
 ```cs
-public override IEnumerable<Session> ControlSystemAttached()
+public override IEnumerable<Session> ProcessEngineAttached()
 {
     yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
 }
