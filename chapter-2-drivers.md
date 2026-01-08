@@ -28,7 +28,7 @@ Now, in order to use simulation, add the package `Moryx.Drivers.Simulation` to t
 The ColorizingCell is using a protocol, where it can read and write variables on the physical cell.
 
 1. When the physical cell is ready to work, it will set the input `Ready` to `true`.
-2. The digital twin will send a `ReadyToWork` input changed event. 
+2. The digital twin will send a `Ready` input changed event. 
 3. When the cell receives an activity, set the output `ProcessStart` to `true`.
 4. Read the result from the input `ProcessResult`.
 
@@ -93,9 +93,9 @@ Replace the contents of the function with the following two code segments.
 ```cs
 private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
-    if (args.Key == ReadyToWork)
+    if (args.Key == Ready)
     {
-        if ((bool)Driver.Input[ReadyToWork] && _currentSession is not ActivityStart)
+        if ((bool)Driver.Input[Ready] && _currentSession is not ActivityStart)
         {
             var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
             _currentSession = rtw;
