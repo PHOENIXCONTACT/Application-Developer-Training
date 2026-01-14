@@ -49,7 +49,7 @@ public class ColorizingCell : Cell
 }
 ```
 
-In order to recognize, when an input changes, subscribe to that in `OnInitialize` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
+In order to recognize, when an input changes, subscribe to that in `OnInitializeAsync` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
 Adjust the Driver variable and functions to match the following.
 
 ```cs
@@ -58,20 +58,20 @@ private IInOutDriver _driver;
 [ResourceReference(ResourceRelationType.Driver)]
 public IInOutDriver Driver
 {
-    get { return _driver; }
+    get => field
     set
     {
-        _driver = value;
-        if (_driver != null)
+        field = value;
+        if (field != null)
         {
-            _driver.Input.InputChanged += OnInputChanged;
+            field.Input.InputChanged += OnInputChanged;
         }
     }
 }
 ```
 
 ```cs
-protected override void OnInitialize()
+protected override void OnInitializeAsync()
 {
     ...
 
@@ -154,11 +154,11 @@ public override IEnumerable<Session> ControlSystemAttached()
 }
 ```
 
-Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver<bool, bool>` and add the constants for the variable names.
+Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver` and add the constants for the variable names.
 
 ```cs
 [ResourceRegistration]
-public class SimulatedColorizingDriver : SimulatedInOutDriver<bool, bool>
+public class SimulatedColorizingDriver : SimulatedInOutDriver
 {
     private const string ProcessStart = "ProcessStart";
     private const string ProcessResult = "ProcessResult";
