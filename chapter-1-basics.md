@@ -76,12 +76,6 @@ option.
 moryx exec post-setup
 ```
 
-Go to the Command Center which can be reached through the hamburger menu in the upper 
-right corner of the application. Select the DATABASES tab and for each shown context
-set the Configurator value to SQLite Connector, press SAVE and CREATE DATABASE afterwards.
-The displayed notification messages should confirm success. Restart the application,
-go to the Command Center again and ensure that all MODULES display a Running state.
-
 ## Products
 
 At first, you will model [products](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/Products/Concept.md).
