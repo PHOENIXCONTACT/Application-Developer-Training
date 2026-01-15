@@ -76,6 +76,12 @@ option.
 moryx exec post-setup
 ```
 
+Go to the Command Center which can be reached through the hamburger menu in the upper 
+right corner of the application. Select the DATABASES tab and for each shown context
+set the Configurator value to SQLite Connector, press SAVE and CREATE DATABASE afterwards.
+The displayed notification messages should confirm success. Restart the application,
+go to the Command Center again and ensure that all MODULES display a Running state.
+
 ## Products
 
 At first, you will model [products](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/Products/Concept.md).
@@ -289,16 +295,16 @@ another *sequence* or start a whole new *session* by signaling `ReadyToWork`.
 ![Activities, Sequences and Sessions](./chapter-1/SessionsAndSequences.png)
 
 Now, you will convert theory into practice and begin with starting a *session*.
-To do so, update the `ControlSystemAttached()` method to the following:
+To do so, update the `ProcessEngineAttached()` method to the following: 
 
 ```cs
-public override IEnumerable<Session> ControlSystemAttached()
+public override IEnumerable<Session> ProcessEngineAttached()
 {
     yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
 }
 ```
 
-`ControlSystemAttached()` gets called in the event of the ControlSystem being
+`ProcessEngineAttached()` gets called in the event of the ProcessEngine being 
 attached to the resource, which is, when the application gets started.
 
 In here you will yield return a new session using `Session.StartSession()` and
@@ -313,8 +319,8 @@ thus signal `ReadyToWork` to the ProcessEngine.
 * `ActivityClassification.Production` is used to notify that the cell is ready to
  work on an `Activity` of type `production`.
 
-Since that should result in an `ActivityStarted` event, the next thing to
- implement will be the `ActivityStarted()` function. Find the comment
+Since that should result in an `StartActivity()` call, the next thing to
+do will be to implement this function. Find the comment
 `/* Start execution here */` and replace it so that the whole function looks
 like this:
 
@@ -331,10 +337,10 @@ public override void StartActivity(ActivityStart activityStart)
 }
 ```
 
-That wouldn't compile so far, because there is no `CompleteInstruction` right
-now, which is provided as a delegate to `Instructor.Execute`. That means, you
-have to implement `CompleteInstruction()`, that gets called, when an instruction
-has finished, i.e.: When a worker has finished their task.
+That wouldn't compile so far, because there is no `InstructionCompleted()` callback right 
+now, which is provided as a delegate to `VisualInstructor.Execute`. That means, you 
+have to implement `InstructionCompleted()`, that gets called, when an instruction
+has finished, i.e.: When a worker has finished its task.
 
 ```cs
 private void InstructionCompleted(int instructionResult, ActivityStart activity)
@@ -345,8 +351,7 @@ private void InstructionCompleted(int instructionResult, ActivityStart activity)
 }
 ```
 
-These previous lines will complete the activity by publishing an `ActivityResult`
-to the ControlSystem.
+These previous lines will pubish an `ActivityCompleted` result to the ProcessEngine. 
 
 And finally, the method that gets called on a cell after completing work is
 `SequenceCompleted()`. In here you start a *ReadyToWork* session again, using

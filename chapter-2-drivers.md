@@ -28,19 +28,19 @@ Now, in order to use simulation, add the package `Moryx.Drivers.Simulation` to t
 The ColorizingCell is using a protocol, where it can read and write variables on the physical cell.
 
 1. When the physical cell is ready to work, it will set the input `Ready` to `true`.
-2. The digital twin will send a `ReadyToWork`.
+2. The digital twin will send a `Ready` input changed event. 
 3. When the cell receives an activity, set the output `ProcessStart` to `true`.
 4. Read the result from the input `ProcessResult`.
 
-For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell and create an `IInOutDriver`. Also add constants for the names of the variables to read and write.
+For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell and replace the already generated `IMessageDriver` by an `IInOutDriver`. Also add constants for the names of the variables to read and write.
 
 ```cs
 [ResourceRegistration]
-public class ColorizingCell : Cell
+public class ColorizingCell : Cell, IStateContext
 {
     private const string ProcessStart = "ProcessStart";
     private const string ProcessResult = "ProcessResult";
-    private const string ReadyToWork = "Ready";
+    private const string Ready = "Ready";
 
     [ResourceReference(ResourceRelationType.Driver)]
     public IInOutDriver Driver { get; set; }
@@ -61,8 +61,14 @@ public IInOutDriver Driver
     get => field
     set
     {
-        field = value;
-        if (field != null)
+        if (_driver?.Input != null)
+        {
+            _driver.Input.InputChanged -= OnInputChanged;
+        }
+
+        _driver = value;
+
+        if (_driver?.Input != null)
         {
             field.Input.InputChanged += OnInputChanged;
         }
@@ -75,7 +81,7 @@ protected override void OnInitializeAsync()
 {
     ...
 
-    if (_driver != null)
+    if (_driver?.Input != null)
     {
         _driver.Input.InputChanged += OnInputChanged;
     }
@@ -88,31 +94,37 @@ Replace the contents of the function with the following two code segments.
 ```cs
 private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
-    if (args.Key.Equals(ReadyToWork) && (bool)args.Value && !(_currentSession is ActivityStart))
+    if (args.Key == Ready)
     {
-        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
-        _currentSession = rtw;
-        PublishReadyToWork(rtw);
+        if ((bool)Driver.Input[Ready] && _currentSession is not ActivityStart)
+        {
+            var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+            _currentSession = rtw;
+            PublishReadyToWork(rtw);
+        }
     }
 
     ...
 }
 ```
 
-If the changed input is `ProcessResult`, read the result from the input and publish it as `ActivityCompleted`. Also set the input `ProcessStart` back to false, so that the physical cell is able to detect when to start the next process. If you don't reset the value of `ProcessStart`, the physical cell is not able to recognize the specific moment an activity should start. Some physical cells also only recognize rising or falling edges. Constant values would trigger nothing.
+If the changed input is `ProcessResult`, read the result from the input and publish it as `ActivityCompleted`. Also set the ouput `ProcessStart` back to false, so that the physical cell is able to detect when to start the next process. If you don't reset the value of `ProcessStart`, the physical cell is not able to recognize the specific moment an activity should start. Some physical cells also only recognize rising or falling edges. Constant values would trigger nothing.
 
 ```cs
 private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
     ...
-    else if (args.Key.Equals(ProcessResult) && _currentSession is ActivityStart activitySession)
+    else if (args.Key == ProcessResult)
     {
-        _driver.Output[ProcessStart] = false;
-        var processResult = _driver.Input[ProcessResult];
+        if (_currentSession is ActivityStart activitySession)
+        {
+            _driver.Output[ProcessStart] = false;
+            var processResult = (bool)_driver.Input[ProcessResult];
 
-        var result = activitySession.CreateResult(processResult ? (int)ColorizingActivityResults.Success : (int)ColorizingActivityResults.Failed);
-        _currentSession = result;
-        PublishActivityCompleted(result);
+            var result = activitySession.CreateResult(processResult ? (int)ColorizingActivityResults.Success : (int)ColorizingActivityResults.Failed);
+            _currentSession = result;
+            PublishActivityCompleted(result);
+        }
     } 
 }
 ```
@@ -125,14 +137,14 @@ public override void StartActivity(ActivityStart activityStart)
     _currentSession = activityStart;
     switch (activityStart.Activity)
     {
-        case Colorizing​Activity activity:
+        case Colorizing​Activity:
             _driver.Output[ProcessStart] = true;
             break;
     }
 }
 ```
 
-The `SessionCompleted` can be implemented in the same way as in the AssemblingCell.
+The `SequenceCompleted` can be implemented in the same way as in the AssemblingCell.
 
 ```cs
 public override void SequenceCompleted(SequenceCompleted completed)
@@ -145,16 +157,16 @@ public override void SequenceCompleted(SequenceCompleted completed)
 }
 ```
 
-The same applies for `ControlSystemAttached`.
+The same applies for `ProcessEngineAttached`.
 
 ```cs
-public override IEnumerable<Session> ControlSystemAttached()
+public override IEnumerable<Session> ProcessEngineAttached()
 {
     yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
 }
 ```
 
-Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver` and add the constants for the variable names.
+Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver` and add the constants for the variable names. 
 
 ```cs
 [ResourceRegistration]
@@ -168,7 +180,7 @@ public class SimulatedColorizingDriver : SimulatedInOutDriver
 }
 ```
 
-A `SimulationDriver` has several states, which are needed in order for the SimulationModule to know what happens. After the system has booted, the driver is in the state `Idle`. Is a product arriving, the cell sends a `ReadyToWork` and the driver changes its state to `Requested`. During production the state is `Executing` and afterward it changes back to `Idle`.
+A `SimulatedInOutDriver` has several states, which are needed in order for the SimulationModule to know what happens. After the system has booted, the driver is in the state `Idle`. Is a product arriving, the cell sends a `Ready` and the driver changes its state to `Requested`. During production the state is `Executing` and afterward it changes back to `Idle`.
 
 ![States of a SimulationDriver](./chapter-2/SimulationStates.png)
 
