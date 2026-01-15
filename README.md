@@ -45,7 +45,7 @@ This is a list of more or less 'advanced' topics
 Before you start, you need the following tools installed on your machine:
 
 * [ ] [Git](https://git-scm.com/)
-* [ ] [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/) (Any version below wouldn't work, but you can install them in parallel)
+* [ ] [Visual Studio 2022 or newer](https://visualstudio.microsoft.com/downloads/)
 * [ ] [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 
 ## [Chapter 1 - Basics](chapter-1-basics.md)
