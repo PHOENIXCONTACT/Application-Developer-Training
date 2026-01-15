@@ -49,7 +49,8 @@ public class ColorizingCell : Cell, IStateContext
 }
 ```
 
-In order to recognize, when an input changes, subscribe to that in  `OnInitialize` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell. Adjust the Driver property and functions to match the following.
+In order to recognize, when an input changes, subscribe to that in `OnInitializeAsync` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
+Adjust the Driver variable and functions to match the following.
 
 ```cs
 private IInOutDriver _driver;
@@ -57,7 +58,7 @@ private IInOutDriver _driver;
 [ResourceReference(ResourceRelationType.Driver)]
 public IInOutDriver Driver
 {
-    get { return _driver; }
+    get => field
     set
     {
         if (_driver?.Input != null)
@@ -69,14 +70,14 @@ public IInOutDriver Driver
 
         if (_driver?.Input != null)
         {
-            _driver.Input.InputChanged += OnInputChanged;
+            field.Input.InputChanged += OnInputChanged;
         }
     }
 }
 ```
 
 ```cs
-protected override void OnInitialize()
+protected override void OnInitializeAsync()
 {
     ...
 

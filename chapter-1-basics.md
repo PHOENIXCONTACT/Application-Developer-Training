@@ -192,7 +192,7 @@ Now you should have your products `100001-00 Green Pencil GP-1B` and
 The next challenge is to actually let a resource produce the pencils. So far there is
 no script that describes how the pencils are produced.
 Therefore, the next step is to model a resource after which we can create a **Recipe** and a
-[Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/Processing/Workplans.md).
+[Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/Workplans.md).
 
 ## Resources
 
