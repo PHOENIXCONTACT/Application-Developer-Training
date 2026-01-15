@@ -92,14 +92,11 @@ Replace the contents of the function with the following two code segments.
 ```cs
 private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
-    if (args.Key == Ready)
+    if (args.Key == Ready && (bool)args.Value && _currentSession is not ActivityStart)
     {
-        if ((bool)Driver.Input[Ready] && _currentSession is not ActivityStart)
-        {
-            var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
-            _currentSession = rtw;
-            PublishReadyToWork(rtw);
-        }
+        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+        _currentSession = rtw;
+        PublishReadyToWork(rtw);
     }
 
     ...
@@ -112,17 +109,14 @@ If the changed input is `ProcessResult`, read the result from the input and publ
 private void OnInputChanged(object sender, InputChangedEventArgs args)
 {
     ...
-    else if (args.Key == ProcessResult)
+    else if (args.Key == ProcessResult && _currentSession is ActivityStart activitySession)
     {
-        if (_currentSession is ActivityStart activitySession)
-        {
-            Driver.Output[ProcessStart] = false;
-            var processResult = (bool)Driver.Input[ProcessResult];
+        Driver.Output[ProcessStart] = false;
+        var processResult = (bool)Driver.Input[ProcessResult];
 
-            var result = activitySession.CreateResult(processResult ? (int)ColorizingActivityResults.Success : (int)ColorizingActivityResults.Failed);
-            _currentSession = result;
-            PublishActivityCompleted(result);
-        }
+        var result = activitySession.CreateResult(processResult ? (int)ColorizingActivityResults.Success : (int)ColorizingActivityResults.Failed);
+        _currentSession = result;
+        PublishActivityCompleted(result);
     } 
 }
 ```
