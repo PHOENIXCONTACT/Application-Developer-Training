@@ -28,7 +28,7 @@ Now, in order to use simulation, add the package `Moryx.Drivers.Simulation` to t
 The ColorizingCell is using a protocol, where it can read and write variables on the physical cell.
 
 1. When the physical cell is ready to work, it will set the input `Ready` to `true`.
-2. The digital twin will send a `Ready` input changed event. 
+2. The digital twin will send a `Ready` input changed event.
 3. When the cell receives an activity, set the output `ProcessStart` to `true`.
 4. Read the result from the input `ProcessResult`.
 
@@ -53,22 +53,20 @@ In order to recognize, when an input changes, subscribe to that in `OnInitialize
 Adjust the Driver variable and functions to match the following.
 
 ```cs
-private IInOutDriver _driver;
-
 [ResourceReference(ResourceRelationType.Driver)]
 public IInOutDriver Driver
 {
     get => field
     set
     {
-        if (_driver?.Input != null)
+        if (field?.Input != null)
         {
-            _driver.Input.InputChanged -= OnInputChanged;
+            field.Input.InputChanged -= OnInputChanged;
         }
 
-        _driver = value;
+        field = value;
 
-        if (_driver?.Input != null)
+        if (field?.Input != null)
         {
             field.Input.InputChanged += OnInputChanged;
         }
@@ -81,9 +79,9 @@ protected override void OnInitializeAsync()
 {
     ...
 
-    if (_driver?.Input != null)
+    if (Driver?.Input != null)
     {
-        _driver.Input.InputChanged += OnInputChanged;
+        Driver.Input.InputChanged += OnInputChanged;
     }
 }
 ```
@@ -118,8 +116,8 @@ private void OnInputChanged(object sender, InputChangedEventArgs args)
     {
         if (_currentSession is ActivityStart activitySession)
         {
-            _driver.Output[ProcessStart] = false;
-            var processResult = (bool)_driver.Input[ProcessResult];
+            Driver.Output[ProcessStart] = false;
+            var processResult = (bool)Driver.Input[ProcessResult];
 
             var result = activitySession.CreateResult(processResult ? (int)ColorizingActivityResults.Success : (int)ColorizingActivityResults.Failed);
             _currentSession = result;
@@ -138,7 +136,7 @@ public override void StartActivity(ActivityStart activityStart)
     switch (activityStart.Activity)
     {
         case Colorizing​Activity:
-            _driver.Output[ProcessStart] = true;
+            Driver.Output[ProcessStart] = true;
             break;
     }
 }
@@ -166,7 +164,7 @@ public override IEnumerable<Session> ProcessEngineAttached()
 }
 ```
 
-Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver` and add the constants for the variable names. 
+Now you have to implement the driver. Create a new driver `SimulatedColorizingDriver` in the project `PencilFactory.Resources.Colorizing`, which is derived from `SimulatedInOutDriver` and add the constants for the variable names.
 
 ```cs
 [ResourceRegistration]
