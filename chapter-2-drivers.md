@@ -32,7 +32,7 @@ The ColorizingCell is using a protocol, where it can read and write variables on
 3. When the cell receives an activity, set the output `ProcessStart` to `true`.
 4. Read the result from the input `ProcessResult`.
 
-For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell and replace the already generated `IMessageDriver` by an `IInOutDriver`. Also add constants for the names of the variables to read and write.
+For a protocol like that the `IInOutDriver` makes the most sense. Open the ColorizingCell. It should already contain an `IInOutDriver`. Also add constants for the names of the variables to read and write.
 
 ```cs
 [ResourceRegistration]
@@ -49,14 +49,14 @@ public class ColorizingCell : Cell, IStateContext
 }
 ```
 
-In order to recognize, when an input changes, subscribe to that in `OnInitializeAsync` and when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
+In order to recognize, when an input changes, subscribe to that in when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
 Adjust the Driver variable and functions to match the following.
 
 ```cs
 [ResourceReference(ResourceRelationType.Driver)]
 public IInOutDriver Driver
 {
-    get => field
+    get => field;
     set
     {
         if (field?.Input != null)
@@ -74,17 +74,6 @@ public IInOutDriver Driver
 }
 ```
 
-```cs
-protected override void OnInitializeAsync()
-{
-    ...
-
-    if (Driver?.Input != null)
-    {
-        Driver.Input.InputChanged += OnInputChanged;
-    }
-}
-```
 
 In the method `OnInputChanged` you will check, if the value of `Ready` has changed. If it is true, send a `ReadyToWork` to the ProcessEngine.
 Replace the contents of the function with the following two code segments.

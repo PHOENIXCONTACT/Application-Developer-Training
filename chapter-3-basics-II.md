@@ -92,7 +92,7 @@ public class ColorizingParameters : VisualInstructionParameters
 {
     public PencilColor Color { get; set; }
 
-    protected override void Populate(IProcess process, Parameters instance)
+    protected override void Populate(Process process, Parameters instance)
     {
         base.Populate(process,instance);
 
