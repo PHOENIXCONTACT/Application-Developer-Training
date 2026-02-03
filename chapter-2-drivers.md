@@ -13,6 +13,14 @@ Common interfaces for drivers are `IMessageDriver<TMessage>` and `IInOutDriver`.
 * The `IMessageDriver<TMessage>` is used for message based protocols. The driver is able to send and receive messages. When a new message is received, an event gets invoked. A typical protocol would be MQTT.
 * The `IInOutDriver` can read and write variables on a server. A typical protocol is OPC UA.
 
+### Additional Documentation: Simulation
+
+If you want to learn more about how simulation works in MORYX or how simulated drivers interact with cells, the full open‑source tutorial is available here:
+
+🔗 https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-simulate-my-production.md
+
+This guide explains the architecture behind the simulation module, the states of a simulation driver, and how `ISimulationDriver` can be implemented to emulate hardware behavior. It extends the concepts shown in this chapter with more background and advanced examples.
+
 ## Simulated InOutDriver
 
 You will start with the ColorizingCell. Since the cell isn't finished yet, the manufacturer wants you to simulate the communication first.
@@ -221,3 +229,5 @@ Then create a new workplan containing both steps and add it through a recipe to 
 ![Complete workplan](./chapter-2/CompleteWorkplan.png)
 
 Now you should be able to start a new production.
+
+
