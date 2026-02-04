@@ -48,7 +48,8 @@ in the following command:
 moryx new PencilFactory --steps Assembling --products GraphitePencil
 ```
 
-> **Note** This training uses a simplified application template that is tailored to this scenario. It is provided by the --branch parameter here.
+> [!NOTE]
+> This training uses a simplified application template that is tailored to this scenario. It is provided by the --branch parameter here.
 > For real world applications you would probably omit --branch for a more advanced default setup or customize it to your needs (see [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or moryx --help for more information).
 
 This should not only leave you with a solution `PencilFactory.sln` inside
@@ -59,7 +60,8 @@ That means, you can directly open it in Visual Studio and dig into it.
 
 Run the application (press `F5`).
 
-> **Note** Starting it for the first time will restore NuGet packages.That can
+> [!NOTE]
+> Starting it for the first time will restore NuGet packages.That can
 > take a few minutes.
 
 ![Application dashboard](./chapter-1/HomePageOfPencilApp.PNG)
@@ -92,7 +94,8 @@ Let's take a look at the composition of the pencil *Pencilla Inc.* produces.
 * The pencil has a color (green or brown).
 * Graphite can be in different degrees of hardness, in this scenario *2B*, *B* and *HB*.
 
-> **Note** that, when defining the hardness of pencils, the number (degree) is
+> [!NOTE]
+> When defining the hardness of pencils, the number (degree) is
 > put first (2B, 2H, etc.). Since this can't be represented in code, it is
 > switched for names, while for everything else the official format is used. If
 > you are interested, you will find more about [grading and classification here](https://en.wikipedia.org/wiki/Pencil#Grading_and_classification).
@@ -147,7 +150,8 @@ To create a product, you need to run the application now and head to the
 Click on the plus button to open the 'Product Importer' menu. This title may
 sound a bit confusing, but it lets you add new products.
 
-> **Note** The naming here comes from the fact, that you wouldn't necessarily add
+> [!NOTE]
+> The naming here comes from the fact, that you wouldn't necessarily add
 > products here, but 'import' them from other systems.
 
 ![New product](./chapter-1/create-product.png)
@@ -245,7 +249,8 @@ instructions to a worker. So the following resources are needed:
 You will set up these in MORYX within the *Resources UI* by clicking the "+"
 button and selecting the required cell.
 
-> **Note** Make sure to deselect all cells before adding more, so that they will
+> [!NOTE]
+> Make sure to deselect all cells before adding more, so that they will
 > be added to the root level and not as children of other resources. Even though,
 > that wouldn't do any harm.
 
