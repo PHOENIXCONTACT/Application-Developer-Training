@@ -80,13 +80,13 @@ moryx exec post-setup
 
 ## Products
 
-At first, you will model [products](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/Products/Concept.md).
+At first, you will model [products](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/module-products/product-definition.md).
 Products represent the articles to be manufactured. MORYX differentiates between
 `ProductType` and `ProductInstance`. The `ProductType` is what you can order
 in a catalog, while the `ProductInstance` is what you would receive after ordering:
 an instance of the product with its unique serial number. In order for a `ProductType`
 to be produced, it needs a corresponding `ProductInstance`. For further
-information on how to create a product, see [this](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/tutorials/HowToCreateAProduct.md).
+information on how to create a product, see [this](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-create-a-product.md).
 
 Let's take a look at the composition of the pencil *Pencilla Inc.* produces.
 
@@ -108,7 +108,7 @@ From the details above, the `GraphitePencilType` needs
 You will find the `GraphitePencilType` among all other `<Product>Types` in the
 `PencilFactory` package within the `Products` folder.
 
-Paste the following code and for properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/Core/Serialization/EntryConvert.md#entryserialize-attribute)
+Paste the following code and for properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/framework/Serialization/entry-convert.md#entryserialize-attribute)
 attribute. For properties to be saved in the database, use the [DataMember](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute?view=net-7.0) attribute.
 
 ``` cs
@@ -190,7 +190,7 @@ Now you should have your products `100001-00 Green Pencil GP-1B` and
 The next challenge is to actually let a resource produce the pencils. So far there is
 no script that describes how the pencils are produced.
 Therefore, the next step is to model a resource after which we can create a **Recipe** and a
-[Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/Workplans.md).
+[Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md).
 
 ## Resources
 
@@ -266,6 +266,12 @@ the previously created *VisualInstructor* to its *Instructor* property.
 
 ### Sessions
 
+Make sure the assembling cell file imports visual instructions:
+
+```cs
+using Moryx.VisualInstructions;
+```
+
 Cell and Instructor are now connected, but they do not interact with each other.
 Therefor, you need to implement the cells session handling. But before you do,
 you will get a short introduction about how this works in theory and the
@@ -297,7 +303,7 @@ Now, you will convert theory into practice and begin with starting a *session*.
 To do so, update the `ProcessEngineAttached()` method to the following: 
 
 ```cs
-public override IEnumerable<Session> ProcessEngineAttached()
+protected override IEnumerable<Session> ProcessEngineAttached()
 {
     yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
 }
@@ -329,8 +335,8 @@ public override void StartActivity(ActivityStart activityStart)
     _currentSession = activityStart;
     switch (activityStart.Activity)
     {
-        case  AssemblingActivity activity:
-            VisualInstructor.Execute(Name, activityStart, InstructionCompleted);
+        case AssemblingActivity activity:
+            _currentInstruction = VisualInstructor.Execute(Name, activityStart, InstructionCompleted);
             break;
     }
 }
@@ -344,6 +350,7 @@ has finished, i.e.: When a worker has finished its task.
 ```cs
 private void InstructionCompleted(int instructionResult, ActivityStart activity)
 {
+    _currentInstruction = 0;
     var result = activity.CreateResult(instructionResult);
     _currentSession = result;
     PublishActivityCompleted(result);
@@ -373,7 +380,7 @@ public override void SequenceCompleted(SequenceCompleted completed)
 
 In order to produce pencils, you have to establish the connection between cells
 and products: MORYX needs to know, how a product flows through the production
-line. This is not done in the code, but modelled within [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/Processing/Workplans.md).
+line. This is not done in the code, but modelled within [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md).
 
 This allows you to define in a rather abstract way, *what* needs to be done without
 going much more into details. MORYX will find the way later, *how* this is done
@@ -389,6 +396,26 @@ The available *Steps* correlate to the code, that has been generated and was
 shipped together with the *assembling* resources.
 
 ![Whole workplan](./chapter-1/new-workplan.png)
+
+### Make instructions configurable
+
+The instruction texts should not be hard-coded in the cell. They belong in the
+workplan per task. For that, the parameters inherit from
+`VisualInstructionParameters`. `Populate` can pull values from the running
+process. For Assembling, calling the base class is enough, the instructions
+come from the Workplan UI.
+
+File: `src/PencilFactory/Activities/AssemblingStep/AssemblingParameters.cs`
+
+```cs
+public class AssemblingParameters : VisualInstructionParameters
+{
+    protected override void Populate(Process process, Parameters instance)
+    {
+        base.Populate(process, instance);
+    }
+}
+```
 
 You want to configure the text that is displayed on the worker instruction.
 Click on the *Assembling Task* step to edit it and configure it as shown in

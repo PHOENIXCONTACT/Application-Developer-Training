@@ -4,7 +4,7 @@ In this chapter you will implement the ColorizingCell and the TestingCell.
 Both of them are automatic cells, which don't need any user interaction.
 Correspondingly there are no visual instructions. Instead there is some kind of hardware, which needs to be connected to MORYX.
 
-For the cell to communicate with the hardware a [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/HowToBuildADriver.md) is needed.
+For the cell to communicate with the hardware a [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-build-a-driver.md) is needed.
 In here the communication is encapsulated.
 
 As there are many different ways to communicate, there are also many different implementations of drivers.
@@ -132,6 +132,25 @@ public override void StartActivity(ActivityStart activityStart)
 }
 ```
 
+In `ProcessAborting`, reset the same output. The generated template may still use
+`"Start"`, change it to `ProcessStart`:
+
+```cs
+public override void ProcessAborting(Activity affectedActivity)
+{
+    if (_currentSession is ActivityStart activityStart)
+    {
+        VisualInstructor?.Clear(_currentInstruction);
+        if (Driver != null)
+        {
+            Driver.Output[ProcessStart] = false;
+        }
+
+        activityStart.CreateResult((int)ColorizingActivityResults.Failed);
+    }
+}
+```
+
 The `SequenceCompleted` can be implemented in the same way as in the AssemblingCell.
 
 ```cs
@@ -148,7 +167,7 @@ public override void SequenceCompleted(SequenceCompleted completed)
 The same applies for `ProcessEngineAttached`.
 
 ```cs
-public override IEnumerable<Session> ProcessEngineAttached()
+protected override IEnumerable<Session> ProcessEngineAttached()
 {
     yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
 }
@@ -173,13 +192,14 @@ A `SimulatedInOutDriver` has several states, which are needed in order for the S
 ![States of a SimulationDriver](./chapter-2/SimulationStates.png)
 
 The method `Ready` gets called by the simulation module, when there is a new Process for this cell. In a real production this method represents the moment a product arrives at the physical cell. The state changes to `Requested`.
+Always raise the input changed event with **key and value**, otherwise the cell does not receive a matching `args.Key`.
 
 ```cs
-public override void Ready(IActivity activity)
+public override void Ready(Activity activity)
 {
     SimulatedState = SimulationState.Requested;
     SimulatedInput.Values[ReadyToWork] = true;
-    SimulatedInput.RaiseInputChanged(ReadyToWork);
+    SimulatedInput.RaiseInputChanged(ReadyToWork, SimulatedInput.Values[ReadyToWork]);
 }
 ```
 
@@ -191,7 +211,7 @@ protected override void OnOutputSet(object sender, string key)
     if (key == ProcessStart)
     {
         SimulatedInput.Values[ReadyToWork] = false;
-        if (SimulatedOutput.Values[ProcessStart])
+        if ((bool)SimulatedOutput.Values[ProcessStart])
         {
             SimulatedState = SimulationState.Executing;
         }
@@ -199,7 +219,7 @@ protected override void OnOutputSet(object sender, string key)
         {
             SimulatedState = SimulationState.Idle;
         }
-    } 
+    }
 }
 ```
 
@@ -208,8 +228,8 @@ The method `Result` gets called after the (simulated) physical cell has finished
 ```cs
 public override void Result(SimulationResult result)
 {
-    SimulatedInput.Values[ProcessResult] = result.Result == (int) ColorizingActivityResults.Success;
-    SimulatedInput.RaiseInputChanged(ProcessResult);
+    SimulatedInput.Values[ProcessResult] = result.Result == (int)ColorizingActivityResults.Success;
+    SimulatedInput.RaiseInputChanged(ProcessResult, SimulatedInput.Values[ProcessResult]);
 }
 ```
 
