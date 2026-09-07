@@ -2,7 +2,7 @@
 
 *Pencilla Inc.* wants to take the first step toward a digital factory. You start small: create **PencilFactory** and bring the manual Assembling station online. Colorizing, Testing, and Packing wait for later chapters.
 
-> [Table of contents](README.md) | [Next](chapter-2-drivers.md)
+> [Table of contents](README.md) | [Next](chapter-02-drivers.md)
 
 ## Use Case
 
@@ -62,7 +62,7 @@ Run the application (press `F5`).
 > **Note:** Starting it for the first time will restore NuGet packages. That can take a few minutes.
 
 
-![Application dashboard](./chapter-1/Home.png)
+![Application dashboard](./chapter-01/Home.png)
 
 Now that you have a running MORYX instance, you need to create some databases.
 To skip the UI here and speed things up, you'll use the MORYX CLI again.
@@ -148,7 +148,7 @@ sound a bit confusing, but it lets you add new products.
 > **Note:** The naming here comes from the fact, that you wouldn't necessarily add products here, but 'import' them from other systems.
 
 
-![Import GraphitePencilType](./chapter-1/products-import-graphite.png)
+![Import GraphitePencilType](./chapter-01/products-import-graphite.png)
 
 * Click on the ProductType dropdown and select **GraphitePencilType**
 * Fill in the fields
@@ -163,9 +163,9 @@ sound a bit confusing, but it lets you add new products.
   in this case.
 * Save your changes by clicking on the save icon at the top right corner.
 
-![Edit product color and hardness](./chapter-1/product-edit-color-hardness-1.png)
+![Edit product color and hardness](./chapter-01/product-edit-color-hardness-1.png)
 
-![Edit second product properties](./chapter-1/product-edit-color-hardness-2.png)
+![Edit second product properties](./chapter-01/product-edit-color-hardness-2.png)
 
 Repeat the same steps for a second product:
 
@@ -179,7 +179,7 @@ Repeat the same steps for a second product:
 If you did everything correctly, you should end up with something more or less
 similar to the image below.
 
-![Save product properties](./chapter-1/product-edit-color-hardness-3.png)
+![Save product properties](./chapter-01/product-edit-color-hardness-3.png)
 
 Now you should have your products `100001-00 Green Pencil GP-1B` and
 `100002-00 Brown Pencil BP-HB`.
@@ -248,7 +248,7 @@ button and selecting the required cell.
 > **Note:** Make sure to deselect all cells before adding more, so that they will be added to the root level and not as children of other resources. Even though, that wouldn't do any harm.
 
 
-![Create resources](./chapter-1/create-resources.png)
+![Create resources](./chapter-01/create-resources.png)
 
 In the following dialog it is ok to go with just the typename as the cell
 identifier.
@@ -256,7 +256,7 @@ identifier.
 If you then select the *AssemblingCell* and click the edit button, you can assign
 the previously created *VisualInstructor* to its *Instructor* property.
 
-![Create resources](./chapter-1/assign-instructor.png)
+![Create resources](./chapter-01/assign-instructor.png)
 
 ### Sessions
 
@@ -291,7 +291,7 @@ it will "close" the sequence with `SequenceCompleted()`.
 Then, the resource could continue the current *session* (`ContinueSession`) with
 another *sequence* or start a whole new *session* by signaling `ReadyToWork`.
 
-![Activities, Sequences and Sessions](./chapter-1/SessionsAndSequences.png)
+![Activities, Sequences and Sessions](./chapter-01/SessionsAndSequences.png)
 
 Now, you will convert theory into practice and begin with starting a *session*.
 To do so, update the `ProcessEngineAttached()` method to the following: 
@@ -382,14 +382,14 @@ for a running order.
 
 Start the application, go to *Workplans* and click on the plus button.
 
-![Create new workplan](./chapter-1/NewWorkplan.png)
+![Create new workplan](./chapter-01/NewWorkplan.png)
 
 Drag an *Assembling Task* step to the workplan and connect the inputs and outputs.
 
 The available *Steps* correlate to the code, that has been generated and was
 shipped together with the *assembling* resources.
 
-![Whole workplan](./chapter-1/new-workplan.png)
+![Whole workplan](./chapter-01/new-workplan.png)
 
 ### Make instructions configurable
 
@@ -416,7 +416,7 @@ Click on the *Assembling Task* step to edit it and configure it as shown in
 the screenshot below. The text to put in could be `Put the graphite into the slats and glue them together. Then cut the result into pieces and shape each of them`. But could be
 anything you want.
 
-![Configure tasks](./chapter-1/configure-assembling-task.png)
+![Configure tasks](./chapter-01/configure-assembling-task.png)
 
 When you are done, modeling your workflow, you have to save the workplan.
 
@@ -430,19 +430,19 @@ Go to *Products* and select the *Product* you want to produce, that is the
 top right corner. Click the *Add Recipe* button, located on the bottom left
 corner to add a new recipe.
 
-![Add a new recipe](./chapter-1/recipe-add-1.png)
+![Add a new recipe](./chapter-01/recipe-add-1.png)
 
 * Select the **ProductionRecipe**, give the recipe a name `PencilRecipe` and select
 your created workplan `Workplan`.
 
-![Create a new recipe](./chapter-1/recipe-add-2.png)
+![Create a new recipe](./chapter-01/recipe-add-2.png)
 
 * Click on **Create** for the recipe to show up in the products UI.
 * For the recipe to be automatically selected when the product is produced, select
 `Default` Classification.
 * Save your changes by clicking on the save icon located at the top right corner.
 
-![Select recipe classification](./chapter-1/recipe-add-3.png)
+![Select recipe classification](./chapter-01/recipe-add-3.png)
 
 * Repeat the same steps for the second product `100002-00 Green Pencil GP-HB`.
 
@@ -452,7 +452,7 @@ To create a new `Order`. Navigate to the *Orders* UI.
 
 * Click on the add button at the bottom right.
 
-![Orders](./chapter-1/order-create-1.png)
+![Orders](./chapter-01/order-create-1.png)
 
 Fill in the details of the `Order`:
 
@@ -466,20 +466,19 @@ Click on the plus button to add this as an operation to the order. One order
 can have multiple operations, but this is not needed here. Click *CREATE* to
 create the order.
 
-![Create order](./chapter-1/order-create-2.png)
+![Create order](./chapter-01/order-create-2.png)
 
-![Order created](./chapter-1/order-create-3.png)
+![Order created](./chapter-01/order-create-3.png)
 
 * Click on *BEGIN* to start the production of the order.
-
 * Enter `1` as the `Partial Amount`.
 * Then click on  *BEGIN* to start the production.
 
-![Begin production](./chapter-1/production-start-1.png)
+![Begin production](./chapter-01/production-start-1.png)
 
 Now the production is running!
 
-![Production running](./chapter-1/production-start-2.png)
+![Production running](./chapter-01/production-start-2.png)
 
 That's it, you should now be able to let the pencils flow through the assembling
 cell.
@@ -488,9 +487,9 @@ In order to see the visual instructions, go to the module `Worker Support`.
 Select VisualInstructor as Display, if this is not already done by default.
 You can manually select it by clicking on the Settings icon at the top right.
 
-![Select VisualInstructor display](./chapter-1/instructor-select-1.png)
+![Select VisualInstructor display](./chapter-01/instructor-select-1.png)
 
-![Worker support with instructor](./chapter-1/instructor-select-2.png)
+![Worker support with instructor](./chapter-01/instructor-select-2.png)
 
 Use the `SUCCESS` and `FAILED` action to make the products flow through the production line
 
@@ -513,15 +512,15 @@ If the issue occurs during the APD at a later stage due to messing up the order 
 
 #### Step 1: Open the Command Center
 
-![Open the Command Center](./chapter-1/command-center-open.png)
+![Open the Command Center](./chapter-01/command-center-open.png)
 
 #### Step 2: Check the databases and create missing ones
 
-![2. Check the databases and create missing ones](./chapter-1/commandCenterDB.png)
+![2. Check the databases and create missing ones](./chapter-01/commandCenterDB.png)
 
 #### Step 3: Reincarnate the failed services
 
-![3. Reincarnate the failed services](./chapter-1/commandCenterModules.png)
+![3. Reincarnate the failed services](./chapter-01/commandCenterModules.png)
 
 ### I cannot find a resource in the add dialog
 
@@ -536,5 +535,5 @@ To fix the problem, you should add any missing project or package references and
 * [ ] AssemblingCell linked to VisualInstructor
 * [ ] Workplan, recipe, and first order completed in Worker Support
 
-> [Table of contents](README.md) | [Next](chapter-2-drivers.md)
+> [Table of contents](README.md) | [Next](chapter-02-drivers.md)
 

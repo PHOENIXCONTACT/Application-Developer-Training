@@ -2,7 +2,7 @@
 
 Customers no longer place every order by hand in the Orders UI. Stationery shop Mustermann orders in an ERP under article `PEN-GREEN`, while PencilFactory knows material number `100001`. You build the bridge: an adapter for the mapping and a module facade that creates the factory order.
 
-> [Table of contents](README.md) | [Previous](chapter-9-initializer-importer.md) | [Next](chapter-11-cell-selectors.md)
+> [Table of contents](README.md) | [Previous](chapter-09-initializer-importer.md) | [Next](chapter-11-cell-selectors.md)
 
 ## Scenario
 
@@ -556,4 +556,4 @@ Orders UI: find the order, begin production, start
 * [ ] Facade tested directly and via ERP adapter; rejections checked
 * [ ] Order released and started in the Orders UI
 
-> [Table of contents](README.md) | [Previous](chapter-9-initializer-importer.md) | [Next](chapter-11-cell-selectors.md)
+> [Table of contents](README.md) | [Previous](chapter-09-initializer-importer.md) | [Next](chapter-11-cell-selectors.md)

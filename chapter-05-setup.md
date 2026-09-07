@@ -2,7 +2,7 @@
 
 Keeping a ColorizingCell for every color turned out to be costly. *Pencilla Inc.* goes back to a single cell and expects MORYX to prepare it first whenever the paint does not match the order. You implement that as a ColorChange setup before Assembling, Colorizing, and Testing.
 
-> [Table of contents](README.md) | [Previous](chapter-4-testing.md) | [Next](chapter-6-cleanup.md)
+> [Table of contents](README.md) | [Previous](chapter-04-testing.md) | [Next](chapter-06-cleanup.md)
 
 ## Why setup?
 
@@ -359,7 +359,7 @@ In the Command Center open the **SetupProvider** module, **Configuration** tab,
 **SetupTriggers** section. Select type `ProvideColorConfig`, add it with Plus,
 then Save and Restart. Don't forget to reincarnate the module.
 
-![SetupProvider with ProvideColorConfig activated](./chapter-5/setup-provider-provide-color.png)
+![SetupProvider with ProvideColorConfig activated](./chapter-05/setup-provider-provide-color.png)
 
 After you change configs in the Command Center, config files are created under
 `src/PencilFactory.App/Config/`.
@@ -380,16 +380,16 @@ Until chapter 4 the ColorizingCell had **no** VisualInstructor. Setup (ColorChan
 Without the Instructor, a Brown order fails immediately (NullReferenceException) and no
 worker instruction appears. Green can still work if the cell color already matches.
 
-![Single ColorizingCell with Driver and Instructor linked](./chapter-5/single-colorizing-cell-driver-instructor.png)
+![Single ColorizingCell with Driver and Instructor linked](./chapter-05/single-colorizing-cell-driver-instructor.png)
 
 That forces a changeover: one cell, default Green, Brown order. Create a Brown order and start production.
 
-![ColorChange setup instruction to switch to Brown](./chapter-5/color-change-setup-instruction.png)
+![ColorChange setup instruction to switch to Brown](./chapter-05/color-change-setup-instruction.png)
 
 In worker assistance the instruction to switch to Brown appears.
 After Success, under **Resources** the ColorizingCell **Color** is **Brown**.
 
-![ColorizingCell Color property set to Brown after setup](./chapter-5/colorizing-cell-color-brown.png)
+![ColorizingCell Color property set to Brown after setup](./chapter-05/colorizing-cell-color-brown.png)
 
 Then production runs as before (Assembling, Colorizing, Testing).
 
@@ -407,7 +407,7 @@ second simulated result can be Failed.
 
 For smoother training runs, open the **Simulation** settings and raise the **Success rate** (e.g. from `50` to `90`). To do this, you need to open the configuration tab in the **MachineSimulator** module within the **CommandCenter**. Then most simulated Colorizing/Testing steps succeed. 
 
-![Simulation success rate](./chapter-5/simulation-success-rate.png)
+![Simulation success rate](./chapter-05/simulation-success-rate.png)
 
 ## Checklist
 
@@ -421,4 +421,4 @@ For smoother training runs, open the **Simulation** settings and raise the **Suc
 * [ ] With one ColorizingCell (Green) tested a Brown order: setup first, then production
 * [ ] (Optional) Simulation success rate increased (e.g. to 90)
 
-> [Table of contents](README.md) | [Previous](chapter-4-testing.md) | [Next](chapter-6-cleanup.md)
+> [Table of contents](README.md) | [Previous](chapter-04-testing.md) | [Next](chapter-06-cleanup.md)

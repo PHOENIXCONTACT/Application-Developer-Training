@@ -2,7 +2,7 @@
 
 A brown order leaves the ColorizingCell brown. The next green order would then need another setup first, or worse, start from the wrong state. *Pencilla Inc.* wants the cell reset to a default color after the job. You reuse ColorChange with an `AfterProduction` trigger. See also [Process Engine](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/module-process-engine/index.md).
 
-> [Table of contents](README.md) | [Previous](chapter-5-setup.md) | [Next](chapter-7-partlinks.md)
+> [Table of contents](README.md) | [Previous](chapter-05-setup.md) | [Next](chapter-07-partlinks.md)
 
 ## Setup vs Cleanup
 
@@ -14,7 +14,7 @@ A brown order leaves the ColorizingCell brown. The next green order would then n
 
 Overall flow with one ColorizingCell:
 
-![Setup, production, and cleanup for a Brown order](./chapter-6/setup-production-cleanup-flow.png)
+![Setup, production, and cleanup for a Brown order](./chapter-06/setup-production-cleanup-flow.png)
 
 Cleanup is tied to the production job, not to the individual pencil. With quantity
 20, cleanup runs only when all 20 are done, not after the first piece.
@@ -127,7 +127,7 @@ Restart the app after the code change. In Command Center **SetupProvider**, tab
 **Configuration**, **SetupTriggers**: add type `ResetColorAfterProductionConfig`,
 then Save and Restart.
 
-![SetupProvider with ResetColorAfterProductionConfig activated](./chapter-6/setup-provider-reset-color.png)
+![SetupProvider with ResetColorAfterProductionConfig activated](./chapter-06/setup-provider-reset-color.png)
 
 ## Test flow
 
@@ -137,7 +137,7 @@ then Save and Restart.
 4. Run production completely (full quantity)
 5. Cleanup: instruction to Green, then SUCCESS
 
-![Cleanup instruction to reset colorizing cell to Green](./chapter-6/cleanup-instruction-green.png)
+![Cleanup instruction to reset colorizing cell to Green](./chapter-06/cleanup-instruction-green.png)
 
 6. ColorizingCell property Color is Green again
 
@@ -156,4 +156,4 @@ then Save and Restart.
 * [ ] Order with a color other than Green: setup, production, cleanup tested
 * [ ] ColorizingCell.Color is Green again after cleanup
 
-> [Table of contents](README.md) | [Previous](chapter-5-setup.md) | [Next](chapter-7-partlinks.md)
+> [Table of contents](README.md) | [Previous](chapter-05-setup.md) | [Next](chapter-07-partlinks.md)

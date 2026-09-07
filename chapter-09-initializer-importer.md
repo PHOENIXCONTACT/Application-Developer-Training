@@ -2,7 +2,7 @@
 
 Building the factory click by click in the UI was fine while learning. A new machine or training lab, however, starts empty every time. *Pencilla Inc.* wants resources and master data created from code, plus a Factory Monitor to see the line.
 
-> [Table of contents](README.md) | [Previous](chapter-8-packing.md) | [Next](chapter-10-module-adapter.md)
+> [Table of contents](README.md) | [Previous](chapter-08-packing.md) | [Next](chapter-10-module-adapter.md)
 
 You will add two plugins:
 
@@ -19,7 +19,7 @@ Clear all databases first; otherwise old cells and products remain as duplicates
 * Reincarnate all modules or restart the app
 * Products, resources, workplans, and orders should be gone from the UI
 
-![Databases clear and recreate in Command Center](./chapter-9/databases-clear-recreate.png)
+![Databases clear and recreate in Command Center](./chapter-09/databases-clear-recreate.png)
 
 ## Factory Monitor packages
 
@@ -150,15 +150,15 @@ The ResourceInitializer is a plugin that you run once in the ResourceManager con
 1. Command Center, ResourceManager, Console: Initialize Resource. Under configs add a ResourceInitializerConfig, choose `PencilFactoryInitializer`, Invoke.
 2. Module Overview: reincarnate ResourceManager
 
-![Initialize Resource with PencilFactoryInitializer](./chapter-9/initialize-resource-pencil-factory.png)
+![Initialize Resource with PencilFactoryInitializer](./chapter-09/initialize-resource-pencil-factory.png)
 
 You should now see all resources created in code in the Resources UI.
 
-![Resources UI after running the Pencil Factory initializer](./chapter-9/resources-after-initializer.png)
+![Resources UI after running the Pencil Factory initializer](./chapter-09/resources-after-initializer.png)
 
 In the Factory Monitor you should now see the pencil factory with four locations (A-1, C-1, T-1, P-1) at the `PositionX`/`PositionY` coordinates.
 
-![Factory Monitor showing pencil factory locations](./chapter-9/factory-monitor.png)
+![Factory Monitor showing pencil factory locations](./chapter-09/factory-monitor.png)
 
 ## Optional: change the background image in FactoryMonitor
 
@@ -419,7 +419,7 @@ public class PencilFactoryProductImporter : ProductImporterBase<PencilFactoryPro
 1. ProductManager, CONFIGURATION, Importers: add plugin type PencilFactoryProductImporterConfig (+)
 2. SAVE + RESTART
 
-![ProductManager Product Importer configuration](./chapter-9/product-importer-config.png)
+![ProductManager Product Importer configuration](./chapter-09/product-importer-config.png)
 
 ### Run
 
@@ -428,9 +428,9 @@ public class PencilFactoryProductImporter : ProductImporterBase<PencilFactoryPro
 3. Leave `PackQuantity` at e.g. 20 and start Import.
 4. Expectation: five products, two workplans, four Default recipes.
 
-![Run PencilFactoryProductImporter in Products UI](./chapter-9/product-importer-run.png)
+![Run PencilFactoryProductImporter in Products UI](./chapter-09/product-importer-run.png)
 
-![Products list after successful import](./chapter-9/products-after-import.png)
+![Products list after successful import](./chapter-09/products-after-import.png)
 
 The UI is the editor. Initializer and Importer are the seed, this is how an application developer sets up a factory that everyone can reproduce.
 
@@ -443,4 +443,4 @@ The UI is the editor. Initializer and Importer are the seed, this is how an appl
 * [ ] ProductImporter files created and importer registered in the config
 * [ ] Import executed: five products, two workplans, four Default recipes
 
-> [Table of contents](README.md) | [Previous](chapter-8-packing.md) | [Next](chapter-10-module-adapter.md)
+> [Table of contents](README.md) | [Previous](chapter-08-packing.md) | [Next](chapter-10-module-adapter.md)

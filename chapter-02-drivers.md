@@ -2,7 +2,7 @@
 
 Demand keeps growing. Assembling can stay with the worker for now, but Colorizing should run without constant manual confirmation. You connect the ColorizingCell to hardware through a Driver and use simulation until the real machine is ready.
 
-> [Table of contents](README.md) | [Previous](chapter-1-basics.md) | [Next](chapter-3-capabilities.md)
+> [Table of contents](README.md) | [Previous](chapter-01-basics.md) | [Next](chapter-03-capabilities.md)
 
 A [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-build-a-driver.md) encapsulates communication with the machine.
 As there are many different ways to communicate, there are also many different implementations of drivers.
@@ -180,7 +180,7 @@ public class SimulatedColorizingDriver : SimulatedInOutDriver
 
 A `SimulatedInOutDriver` has several states, which are needed in order for the SimulationModule to know what happens. After the system has booted, the driver is in the state `Idle`. Is a product arriving, the cell sends a `Ready` and the driver changes its state to `Requested`. During production the state is `Executing` and afterward it changes back to `Idle`.
 
-![States of a SimulationDriver](./chapter-2/SimulationStates.png)
+![States of a SimulationDriver](./chapter-02/SimulationStates.png)
 
 The method `Ready` gets called by the simulation module, when there is a new Process for this cell. In a real production this method represents the moment a product arrives at the physical cell. The state changes to `Requested`.
 Always raise the input changed event with **key and value**, otherwise the cell does not receive a matching `args.Key`.
@@ -226,17 +226,17 @@ public override void Result(SimulationResult result)
 
 Now you have to configure the driver and the cell in the UI.
 
-![Add the Simulated Colorizing Driver](./chapter-2/simulated-colorizing-driver.png)
+![Add the Simulated Colorizing Driver](./chapter-02/simulated-colorizing-driver.png)
 
-![Add the Colorizing Cell](./chapter-2/colorizing-cell.png)
+![Add the Colorizing Cell](./chapter-02/colorizing-cell.png)
 
 Add the driver as a reference to the cell the same way as you did with the VisualInstructor.
 
-![Set the driver as reference in the cell](./chapter-2/set-driver-reference.png)
+![Set the driver as reference in the cell](./chapter-02/set-driver-reference.png)
 
 Then create a new workplan containing both steps and add it through a recipe to a new product.
 
-![Complete workplan](./chapter-2/CompleteWorkplan.png)
+![Complete workplan](./chapter-02/CompleteWorkplan.png)
 
 Assembling still needs Worker Support. Colorizing should complete through the simulated driver.
 
@@ -248,5 +248,5 @@ Assembling still needs Worker Support. Colorizing should complete through the si
 * [ ] Driver linked in the Resources UI
 * [ ] Workplan with Assembling + Colorizing tested
 
-> [Table of contents](README.md) | [Previous](chapter-1-basics.md) | [Next](chapter-3-capabilities.md)
+> [Table of contents](README.md) | [Previous](chapter-01-basics.md) | [Next](chapter-03-capabilities.md)
 

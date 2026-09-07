@@ -42,7 +42,7 @@ Before you start, you need the following tools installed on your machine:
 
 ## Chapters
 
-### [Chapter 1 - Basics](chapter-1-basics.md)
+### [Chapter 1 - Basics](chapter-01-basics.md)
 
 In this chapter you will create a MORYX application from scratch and digitalize a manual assembling station.
 
@@ -55,7 +55,7 @@ You will learn to:
 
 Concepts: Resources, Cells, ProductTypes, ProductInstances, VisualInstructions, Activities, Tasks, Workplans, Orders
 
-### [Chapter 2 - Drivers](chapter-2-drivers.md)
+### [Chapter 2 - Drivers](chapter-02-drivers.md)
 
 Since so many pencils were sold, the manufacturer decided that only manual cells aren't feasible anymore. So some manual cells are replaced by fully automated ones.
 
@@ -66,7 +66,7 @@ You will learn to:
 
 Concepts: Drivers, Protocols, Simulation
 
-### [Chapter 3 - Capabilities](chapter-3-capabilities.md)
+### [Chapter 3 - Capabilities](chapter-03-capabilities.md)
 
 The manufacturer decided to have a separate Colorizing Cell for each color in order not to have to change the paint anymore.
 
@@ -77,7 +77,7 @@ You will learn to:
 
 Concepts: Capabilities, ParameterBinding
 
-### [Chapter 4 - Testing](chapter-4-testing.md)
+### [Chapter 4 - Testing](chapter-04-testing.md)
 
 Quality complaints are rising, so the manufacturer adds Testing as a third station after Assembling and Colorizing. Like Colorizing, it should run automatically through a driver and simulation.
 
@@ -88,7 +88,7 @@ You will learn to:
 
 Concepts: Drivers, Simulation, automatic cells
 
-### [Chapter 5 - Setup](chapter-5-setup.md)
+### [Chapter 5 - Setup](chapter-05-setup.md)
 
 Running a Colorizing Cell for each color became expensive. The manufacturer switches back to a single cell and wants it prepared before production whenever the paint does not match the order.
 
@@ -99,7 +99,7 @@ You will learn to:
 
 Concepts: Setup, SetupTrigger, ActivityClassification.Setup
 
-### [Chapter 6 - Cleanup](chapter-6-cleanup.md)
+### [Chapter 6 - Cleanup](chapter-06-cleanup.md)
 
 After a brown order finishes, the cell should not stay brown forever. The manufacturer wants the line reset to a default color so the next order starts from a known state.
 
@@ -110,7 +110,7 @@ You will learn to:
 
 Concepts: Cleanup, SetupExecution.AfterProduction
 
-### [Chapter 7 - PartLinks](chapter-7-partlinks.md)
+### [Chapter 7 - PartLinks](chapter-07-partlinks.md)
 
 Pencils alone are not enough for the shop floor. The manufacturer now sells retail packs: twenty pencils of one type plus a matching carton.
 
@@ -121,7 +121,7 @@ You will learn to:
 
 Concepts: ProductPartLink, Quantity, product types and instances
 
-### [Chapter 8 - Packing](chapter-8-packing.md)
+### [Chapter 8 - Packing](chapter-08-packing.md)
 
 With the retail pack defined, workers need a packing station. The instruction should tell them how many pencils go into which carton, based on the pack's bill of materials (BOM).
 
@@ -132,7 +132,7 @@ You will learn to:
 
 Concepts: Packing activity, separate workplan and recipe per product
 
-### [Chapter 9 - Initializer and Importer](chapter-9-initializer-importer.md)
+### [Chapter 9 - Initializer and Importer](chapter-09-initializer-importer.md)
 
 Clicking everything together in the UI worked for learning, but every new machine or training lab starts empty. The manufacturer wants the factory and master data created from code and a Factory Monitor to see the line.
 

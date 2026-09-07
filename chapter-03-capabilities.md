@@ -2,7 +2,7 @@
 
 Switching paint on a single ColorizingCell for every green or brown order slows the line down. *Pencilla Inc.* therefore wants one ColorizingCell per color. You teach the Process Engine which cell fits which product through Capabilities and ParameterBinding.
 
-> [Table of contents](README.md) | [Previous](chapter-2-drivers.md) | [Next](chapter-4-testing.md)
+> [Table of contents](README.md) | [Previous](chapter-02-drivers.md) | [Next](chapter-04-testing.md)
 
 Add a ColorizingCell for Green and one for Brown. First publish the cell color through [Capabilities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/capabilities.md). `[EntrySerialize]` makes the property editable in the Resources UI.
 
@@ -121,21 +121,21 @@ public class ColorizingActivity : Activity<ColorizingParameters>
 }
 ```
 
-Now you have done everything to have separate Cells for each pencil color. Start your project and create two different ColorizingCells, one for each color (for example `ColorizingCell_Green` and `ColorizingCell_Brown`), each with its own simulated driver. Do not forget to configure a driver for each cell just like shown at the end of [chapter-2](chapter-2-drivers.md).
+Now you have done everything to have separate Cells for each pencil color. Start your project and create two different ColorizingCells, one for each color (for example `ColorizingCell_Green` and `ColorizingCell_Brown`), each with its own simulated driver. Do not forget to configure a driver for each cell just like shown at the end of [chapter 2](chapter-02-drivers.md).
 
-![Colorizing cells and drivers per color](./chapter-3/colorizing-cells-per-color.png)
+![Colorizing cells and drivers per color](./chapter-03/colorizing-cells-per-color.png)
 
 Open the **Processes** view while an order runs. You can inspect activities and see which resource handled them.
 
-![Processes view](./chapter-3/processes-view.png)
+![Processes view](./chapter-03/processes-view.png)
 
 Example: open a `ColorizingActivity`. The Process Engine selected `ColorizingCell_Green` for a green product via capabilities.
 
-![ColorizingActivity on ColorizingCell Green](./chapter-3/process-activity-resource-green.png)
+![ColorizingActivity on ColorizingCell Green](./chapter-03/process-activity-resource-green.png)
 
 For a brown product, the Process Engine routes to `ColorizingCell_Brown` instead.
 
-![ColorizingActivity on ColorizingCell Brown](./chapter-3/process-activity-resource-brown.png)
+![ColorizingActivity on ColorizingCell Brown](./chapter-03/process-activity-resource-brown.png)
 
 In the first chapter you set values in your parameters using the workplans UI. In this chapter the color was automatically fetched from the product.
 This concept of not having to set the value of parameters explicitly using the UI, but instead automatically fetching them from somewhere is called `ParameterBinding`.
@@ -204,5 +204,5 @@ In this way, it is not possible to change the printing method using the UI.
 * [ ] ColorizingActivity requires capabilities with that color
 * [ ] Separate Green and Brown cells with drivers; routing verified in Processes
 
-> [Table of contents](README.md) | [Previous](chapter-2-drivers.md) | [Next](chapter-4-testing.md)
+> [Table of contents](README.md) | [Previous](chapter-02-drivers.md) | [Next](chapter-04-testing.md)
 

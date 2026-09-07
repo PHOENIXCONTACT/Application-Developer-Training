@@ -2,7 +2,7 @@
 
 Too many pencils leave the line unchecked. After Assembling and Colorizing, *Pencilla Inc.* adds Testing as a third station. You automate it the same way as Colorizing: an `IInOutDriver` plus a `SimulatedTestingDriver` when no real hardware is available.
 
-> [Table of contents](README.md) | [Previous](chapter-3-capabilities.md) | [Next](chapter-5-setup.md)
+> [Table of contents](README.md) | [Previous](chapter-03-capabilities.md) | [Next](chapter-05-setup.md)
 
 ## Add the Testing step
 
@@ -171,7 +171,7 @@ else if (args.Key == ProcessResult && _currentSession is ActivityStart activityS
 
 ### Overall flow
 
-![Overall testing flow](./chapter-4/testing-overall-flow.png)
+![Overall testing flow](./chapter-04/testing-overall-flow.png)
 
 ## SimulatedTestingDriver
 
@@ -232,7 +232,7 @@ public class SimulatedTestingDriver : SimulatedInOutDriver
 
 Simulation applies the result automatically after the execution time (no Success/Failed click):
 
-![Step-by-step testing flow](./chapter-4/testing-step-by-step-flow.png)
+![Step-by-step testing flow](./chapter-04/testing-step-by-step-flow.png)
 
 ## Resources in the UI (Testing)
 
@@ -240,20 +240,20 @@ Simulation applies the result automatically after the execution time (no Success
 2. Create **TestingCell**
 3. Open TestingCell, set the **Driver** reference to the SimulatedTestingDriver
 
-![TestingCell with SimulatedTestingDriver](./chapter-4/testing-cell-and-driver.png)
+![TestingCell with SimulatedTestingDriver](./chapter-04/testing-cell-and-driver.png)
 
 Edit the existing [Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md)
 and insert the Testing task between Colorizing and the end. Route Failed back to
 the Failed connector, Success onward to the next step.
 
-![Workplan with Testing step](./chapter-4/workplan-with-testing.png)
+![Workplan with Testing step](./chapter-04/workplan-with-testing.png)
 
 Start an order and run production through. Top right under **Processes** you see
 the running order: current activity, selected cells, results. That is how you
 verify that capabilities and the workplan take effect  -  including the new
 `TestingActivity`.
 
-![Process view with TestingActivity](./chapter-4/process-with-testing-activity.png)
+![Process view with TestingActivity](./chapter-04/process-with-testing-activity.png)
 
 ## Troubleshooting: CLI leftovers after `moryx add step Testing`
 
@@ -332,4 +332,4 @@ Then rebuild the solution.
 * [ ] Driver and TestingCell linked in the UI
 * [ ] Testing step added to the workplan and production tested
 
-> [Table of contents](README.md) | [Previous](chapter-3-capabilities.md) | [Next](chapter-5-setup.md)
+> [Table of contents](README.md) | [Previous](chapter-03-capabilities.md) | [Next](chapter-05-setup.md)

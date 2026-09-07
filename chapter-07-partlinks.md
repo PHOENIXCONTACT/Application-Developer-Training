@@ -2,7 +2,7 @@
 
 Single pencils are fine for learning the line. For the shop, *Pencilla Inc.* now sells retail packs: twenty pencils of one type plus a matching carton. You model that bill of materials with PartLinks. Details: [Products / PartLinks](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/module-products/product-definition.md).
 
-> [Table of contents](README.md) | [Previous](chapter-6-cleanup.md) | [Next](chapter-8-packing.md)
+> [Table of contents](README.md) | [Previous](chapter-06-cleanup.md) | [Next](chapter-08-packing.md)
 
 ## Scenario
 
@@ -13,7 +13,7 @@ The line still makes graphite pencils first, then packs them for sale:
 
 The bill of materials of a "Green 20er" pack could look like this:
 
-![Retail Pack bill of materials](./chapter-7/retail-pack-bom.png)
+![Retail Pack bill of materials](./chapter-07/retail-pack-bom.png)
 
 So a retail pack ultimately consists of one carton and one product type (here: graphite pencil) with a quantity of 20.
 
@@ -141,13 +141,13 @@ So that ProductManager knows the new types and PartLinks:
 
 The JSON under `Config/` is written when you save (Save + Restart).
 
-![ConfigureType for PencilCartonType in ProductManager console](./chapter-7/configure-type-pencil-carton-1.png)
+![ConfigureType for PencilCartonType in ProductManager console](./chapter-07/configure-type-pencil-carton-1.png)
 
-![ConfigureType for PencilPackType in ProductManager console](./chapter-7/configure-type-pencil-carton-2.png)
+![ConfigureType for PencilPackType in ProductManager console](./chapter-07/configure-type-pencil-carton-2.png)
 
-![SaveConfig invoke in ProductManager console](./chapter-7/save-config-invoke.png)
+![SaveConfig invoke in ProductManager console](./chapter-07/save-config-invoke.png)
 
-![ProductManager TypeStrategies and LinkStrategies after ConfigureType](./chapter-7/product-manager-strategies.png)
+![ProductManager TypeStrategies and LinkStrategies after ConfigureType](./chapter-07/product-manager-strategies.png)
 
 ConfigureType is enough: It registers product types and PartLinks (bill of materials).
 You only need ConfigureInstance when instances should be persisted permanently in the Product DB.
@@ -170,9 +170,9 @@ You should already have graphite pencils from earlier chapters.
 - Color: Green
 - Save
 
-![Create Pencil Carton product in Products UI](./chapter-7/create-pencil-carton.png)
+![Create Pencil Carton product in Products UI](./chapter-07/create-pencil-carton.png)
 
-![Pencil Carton with Color set to Green](./chapter-7/pencil-carton-color-green.png)
+![Pencil Carton with Color set to Green](./chapter-07/pencil-carton-color-green.png)
 
 ### C) Retail pack
 
@@ -184,9 +184,9 @@ You should already have graphite pencils from earlier chapters.
     - Pencil Carton: Green Pencil Carton
 - Save, open again. Links and Quantity must remain.
 
-![Create Pencil Pack product in Products UI](./chapter-7/create-pencil-pack.png)
+![Create Pencil Pack product in Products UI](./chapter-07/create-pencil-pack.png)
 
-![Pencil Pack Parts tab with Graphite Pencil and Carton links](./chapter-7/pencil-pack-parts.png)
+![Pencil Pack Parts tab with Graphite Pencil and Carton links](./chapter-07/pencil-pack-parts.png)
 
 ### Troubleshooting
 
@@ -203,7 +203,7 @@ Now you build a new production step Packing (like Assembling/Colorizing/Testing)
 
 So you can picture it better, a flow could look like the following example:
 
-![Retail Pack order with Packing Task](./chapter-7/retail-pack-order-flow.png)
+![Retail Pack order with Packing Task](./chapter-07/retail-pack-order-flow.png)
 
 So we need a new workplan / production step that handles packing. Details on [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md) and [Activities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/activities.md) in the framework.
 
@@ -261,4 +261,4 @@ In the next chapter you complete Parameters, Activity, Cell, Workplan, and the t
 * [ ] Green Pencil Carton and Green 20er Pack in the Products UI with Quantity = 20
 * [ ] `moryx add step Packing` executed and `PackingCapabilities` without Value
 
-> [Table of contents](README.md) | [Previous](chapter-6-cleanup.md) | [Next](chapter-8-packing.md)
+> [Table of contents](README.md) | [Previous](chapter-06-cleanup.md) | [Next](chapter-08-packing.md)

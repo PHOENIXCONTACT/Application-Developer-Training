@@ -8,7 +8,7 @@ See also [Cells](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs
 [Activities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/activities.md)
 and [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md).
 
-> [Table of contents](README.md) | [Previous](chapter-7-partlinks.md) | [Next](chapter-9-initializer-importer.md)
+> [Table of contents](README.md) | [Previous](chapter-07-partlinks.md) | [Next](chapter-09-initializer-importer.md)
 
 ## Parameters: read PartLinks at runtime
 
@@ -136,7 +136,7 @@ A driver is not needed for this learning step (the worker clicks SUCCESS).
 2. Open the cell, Extension VisualInstructor: the same Instructor as for Assembling and Colorizing.
 3. Save.
 
-![PackingCell with VisualInstructor linked](./chapter-8/packing-cell-instructor.png)
+![PackingCell with VisualInstructor linked](./chapter-08/packing-cell-instructor.png)
 
 ## Own workplan for Retail Pack
 
@@ -148,7 +148,7 @@ A driver is not needed for this learning step (the worker clicks SUCCESS).
 
 No Assembling/Colorizing/Testing in this plan.
 
-![Retail Pack workplan with Packing Task](./chapter-8/packing-workplan.png)
+![Retail Pack workplan with Packing Task](./chapter-08/packing-workplan.png)
 
 ## Recipe on the Retail Pack
 
@@ -162,7 +162,7 @@ No Assembling/Colorizing/Testing in this plan.
 
 Without a Default recipe the order will not start.
 
-![Default Retail Pack production recipe](./chapter-8/retail-pack-recipe.png)
+![Default Retail Pack production recipe](./chapter-08/retail-pack-recipe.png)
 
 ## Test in the UI
 
@@ -173,9 +173,9 @@ Without a Default recipe the order will not start.
 
 Optional beforehand: order GraphitePencil quantity 20 (pencil line). Not technically required for Packing; the instruction simulates placing pencils into the carton.
 
-![Retail Pack production order in Orders UI](./chapter-8/retail-pack-order.png)
+![Retail Pack production order in Orders UI](./chapter-08/retail-pack-order.png)
 
-![Packing worker instruction with quantity, pencil, and carton](./chapter-8/packing-instruction.png)
+![Packing worker instruction with quantity, pencil, and carton](./chapter-08/packing-instruction.png)
 
 ## Checklist
 
@@ -186,4 +186,4 @@ Optional beforehand: order GraphitePencil quantity 20 (pencil line). Not technic
 * [ ] Retail Pack Workplan + Default recipe on the Retail Pack
 * [ ] Order Retail Pack quantity 1: Instruction shows Quantity / pencil / carton
 
-> [Table of contents](README.md) | [Previous](chapter-7-partlinks.md) | [Next](chapter-9-initializer-importer.md)
+> [Table of contents](README.md) | [Previous](chapter-07-partlinks.md) | [Next](chapter-09-initializer-importer.md)
