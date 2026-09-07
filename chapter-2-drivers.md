@@ -1,29 +1,20 @@
-# Driver
+# Chapter 2 - Drivers
 
-In this chapter you will implement the ColorizingCell and the TestingCell.
-Both of them are automatic cells, which don't need any user interaction.
-Correspondingly there are no visual instructions. Instead there is some kind of hardware, which needs to be connected to MORYX.
+Demand keeps growing. Assembling can stay with the worker for now, but Colorizing should run without constant manual confirmation. You connect the ColorizingCell to hardware through a Driver and use simulation until the real machine is ready.
 
-For the cell to communicate with the hardware a [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-build-a-driver.md) is needed.
-In here the communication is encapsulated.
+> [Table of contents](README.md) | [Previous](chapter-1-basics.md) | [Next](chapter-3-capabilities.md)
 
+A [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-build-a-driver.md) encapsulates communication with the machine.
 As there are many different ways to communicate, there are also many different implementations of drivers.
 Common interfaces for drivers are `IMessageDriver` and `IInOutDriver`.
-
 * The `IMessageDriver` is used for message based protocols. The driver is able to send and receive messages. When a new message is received, an event gets invoked. A typical protocol would be MQTT.
 * The `IInOutDriver` can read and write variables on a server. A typical protocol is OPC UA.
 
 ## Simulated InOutDriver
 
-> [!NOTE]  
-> If you want to learn more about how simulation works in MORYX or how simulated drivers interact with cells, the full open‑source tutorial is available here:  
-> 🔗 https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-simulate-my-production.md  
-> This guide explains the architecture behind the simulation module, the states of a simulation driver, and how `ISimulationDriver` can be implemented to emulate hardware behavior. 
-> It extends the concepts shown in this chapter with more background and advanced examples.
-
+> **Note:** If you want to learn more about how simulation works in MORYX or how simulated drivers interact with cells, the full open source tutorial is available here: https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-simulate-my-production.md This guide explains the architecture behind the simulation module, the states of a simulation driver, and how `ISimulationDriver` can be implemented to emulate hardware behavior. It extends the concepts shown in this chapter with more background and advanced examples.
 
 You will start with the ColorizingCell. Since the cell isn't finished yet, the manufacturer wants you to simulate the communication first.
-
 Use the CLI to add the Colorizing step to the project.
 
 ```bash
@@ -125,7 +116,7 @@ public override void StartActivity(ActivityStart activityStart)
     _currentSession = activityStart;
     switch (activityStart.Activity)
     {
-        case Colorizing​Activity:
+        case ColorizingActivity:
             Driver.Output[ProcessStart] = true;
             break;
     }
@@ -235,18 +226,27 @@ public override void Result(SimulationResult result)
 
 Now you have to configure the driver and the cell in the UI.
 
-![Add the driver](./chapter-2/Driver.png)
+![Add the Simulated Colorizing Driver](./chapter-2/simulated-colorizing-driver.png)
 
-![Add the cell](./chapter-2/ColorizingCell.png)
+![Add the Colorizing Cell](./chapter-2/colorizing-cell.png)
 
 Add the driver as a reference to the cell the same way as you did with the VisualInstructor.
 
-![Set the driver as reference in the cell](./chapter-2/SetDriver.png)
+![Set the driver as reference in the cell](./chapter-2/set-driver-reference.png)
 
 Then create a new workplan containing both steps and add it through a recipe to a new product.
 
 ![Complete workplan](./chapter-2/CompleteWorkplan.png)
 
-Now you should be able to start a new production.
+Assembling still needs Worker Support. Colorizing should complete through the simulated driver.
 
+## Checklist
+
+* [ ] Colorizing step added and `Moryx.Drivers.Simulation` referenced
+* [ ] ColorizingCell wired with Driver, `OnInputChanged`, and session methods
+* [ ] `SimulatedColorizingDriver` implemented
+* [ ] Driver linked in the Resources UI
+* [ ] Workplan with Assembling + Colorizing tested
+
+> [Table of contents](README.md) | [Previous](chapter-1-basics.md) | [Next](chapter-3-capabilities.md)
 

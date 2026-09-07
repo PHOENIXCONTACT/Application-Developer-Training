@@ -1,10 +1,10 @@
-# Basics II - Capabilities and ParameterBinding
+# Chapter 3 - Capabilities
 
-In this chapter you will learn how to find the right Cell depending on a product property.
+Switching paint on a single ColorizingCell for every green or brown order slows the line down. *Pencilla Inc.* therefore wants one ColorizingCell per color. You teach the Process Engine which cell fits which product through Capabilities and ParameterBinding.
 
-The manufacturer realized that only one ColorizingCell, in which the paint always has to be changed, isn't really efficient. He decided to add another one. Now for each color there is one cell.
+> [Table of contents](README.md) | [Previous](chapter-2-drivers.md) | [Next](chapter-4-testing.md)
 
-In order to define, which cell uses which color, first add a property `Color` to the ColorizingCell and set the color in the [Capabilities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/capabilities.md) to let Moryx know what the cell is capable of. In this case using a specific color. Remember EntrySerialize means the property can be set in the UI by editing the corresponding resource.
+Add a ColorizingCell for Green and one for Brown. First publish the cell color through [Capabilities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/capabilities.md). `[EntrySerialize]` makes the property editable in the Resources UI.
 
 ```cs
 [ResourceRegistration] 
@@ -28,7 +28,7 @@ public class ColorizingCell : Cell
     {
         base.OnInitialize();
 
-        Capabilities = new Colorizing​Capabilities { Color = _color };
+        Capabilities = new ColorizingCapabilities { Color = _color };
 
         if (Driver != null)
         {
@@ -41,10 +41,8 @@ public class ColorizingCell : Cell
 
 ```
 
-> Note:
-> The private variable with DataMember attribute and the public property attributed with EntrySerialize are separated from each other here.
-> DataMember attributes are committed to the database before EntrySerialize ones are initialized.
-> Here this would lead to not executing the setter before writing to the database.
+> **Note:** The private variable with DataMember attribute and the public property attributed with EntrySerialize are separated from each other here. DataMember attributes are committed to the database before EntrySerialize ones are initialized. Here this would lead to not executing the setter before writing to the database.
+
 
 For this to work add the property `Color` to the `ColorizingCapabilities` and check if the colors of the provided Capabilities match the ones you need.
 
@@ -55,8 +53,8 @@ public class ColorizingCapabilities : CapabilitiesBase
 
     protected override bool ProvidedBy(ICapabilities provided)
     {
-        var providedCapabilities​ = provided as Colorizing​Capabilities;
-        if (providedCapabilities​ != null && providedCapabilities​.Color == Color)
+        var providedCapabilities = provided as ColorizingCapabilities;
+        if (providedCapabilities != null && providedCapabilities.Color == Color)
         {
             return true;
         }
@@ -96,7 +94,7 @@ public class ColorizingParameters : VisualInstructionParameters
     {
         base.Populate(process,instance);
 
-        var parameters = (Colorizing​Parameters) instance;
+        var parameters = (ColorizingParameters) instance;
         var productionProcess = (ProductionProcess) process;
 
         var product = (GraphitePencilType)productionProcess.ProductInstance.Type;
@@ -105,25 +103,39 @@ public class ColorizingParameters : VisualInstructionParameters
 }
 ```
 
-The color in the `Colorizing​Parameters` defines which color is needed for the activity.
+The color in the `ColorizingParameters` defines which color is needed for the activity.
 This information still has to be passed on to ProcessEngine, which is done, by adjusting the RequiredCapabilities.
 The ProcessEngine routes a product to a Cell, which can perform the next activity to be done.
 
 Go to the `ColorizingActivity` also found in the folder `Activities` and set the color in the RequiredCapabilities.
 
 ```cs
-[ActivityResults(typeof(Colorizing​ActivityResults))]
-public class Colorizing​Activity : Activity<Colorizing​Parameters>
+[ActivityResults(typeof(ColorizingActivityResults))]
+public class ColorizingActivity : Activity<ColorizingParameters>
 {
     ...
 
-    public override ICapabilities RequiredCapabilities => new Colorizing​Capabilities() { Color = Parameters.Color };
+    public override ICapabilities RequiredCapabilities => new ColorizingCapabilities() { Color = Parameters.Color };
 
     ...
 }
 ```
 
-Now you have done everything to have separate Cells for each pencil color. Start your project and create two different ColorizingCells, one for each color. Do not forget to configure a driver for each cell just like shown at the end of [chapter-2](chapter-2-drivers.md).
+Now you have done everything to have separate Cells for each pencil color. Start your project and create two different ColorizingCells, one for each color (for example `ColorizingCell_Green` and `ColorizingCell_Brown`), each with its own simulated driver. Do not forget to configure a driver for each cell just like shown at the end of [chapter-2](chapter-2-drivers.md).
+
+![Colorizing cells and drivers per color](./chapter-3/colorizing-cells-per-color.png)
+
+Open the **Processes** view while an order runs. You can inspect activities and see which resource handled them.
+
+![Processes view](./chapter-3/processes-view.png)
+
+Example: open a `ColorizingActivity`. The Process Engine selected `ColorizingCell_Green` for a green product via capabilities.
+
+![ColorizingActivity on ColorizingCell Green](./chapter-3/process-activity-resource-green.png)
+
+For a brown product, the Process Engine routes to `ColorizingCell_Brown` instead.
+
+![ColorizingActivity on ColorizingCell Brown](./chapter-3/process-activity-resource-brown.png)
 
 In the first chapter you set values in your parameters using the workplans UI. In this chapter the color was automatically fetched from the product.
 This concept of not having to set the value of parameters explicitly using the UI, but instead automatically fetching them from somewhere is called `ParameterBinding`.
@@ -154,8 +166,8 @@ public abstract class PrintingCapabilities : CapabilitiesBase
 
     protected override bool ProvidedBy(ICapabilities provided)
     {
-        var providedCapabilities​ = provided as PrintingCapabilities;
-        if (providedCapabilities​ != null && providedCapabilities​.Color == Color)
+        var providedCapabilities = provided as PrintingCapabilities;
+        if (providedCapabilities != null && providedCapabilities.Color == Color)
         {
             return true;
         }
@@ -172,8 +184,8 @@ public class LaserPrintingCapabilities : PrintingCapabilities
 {
     protected override bool ProvidedBy(ICapabilities provided)
     {
-        var providedColorizing​ = provided as LaserPrintingCapabilities;
-        if (providedColorizing​ == null)
+        var providedColorizing = provided as LaserPrintingCapabilities;
+        if (providedColorizing == null)
         {
             return false;
         }
@@ -183,4 +195,14 @@ public class LaserPrintingCapabilities : PrintingCapabilities
 }
 ```
 
-In this way, it's not possible to change the printing method using the UI.
+In this way, it is not possible to change the printing method using the UI.
+
+## Checklist
+
+* [ ] `Color` on ColorizingCell and ColorizingCapabilities
+* [ ] ParameterBinding reads product color into ColorizingParameters
+* [ ] ColorizingActivity requires capabilities with that color
+* [ ] Separate Green and Brown cells with drivers; routing verified in Processes
+
+> [Table of contents](README.md) | [Previous](chapter-2-drivers.md) | [Next](chapter-4-testing.md)
+

@@ -1,16 +1,17 @@
-# Basics
+# Chapter 1 - Basics
 
-In this chapter you will learn the basics of MORYX and how it helps you to set up a production.
+*Pencilla Inc.* wants to take the first step toward a digital factory. You start small: create **PencilFactory** and bring the manual Assembling station online. Colorizing, Testing, and Packing wait for later chapters.
+
+> [Table of contents](README.md) | [Next](chapter-2-drivers.md)
 
 ## Use Case
 
-Your customer *Pencilla Inc.* produces pencils. The production needs prepared
-material - wooden slats and graphite - and consists of the following four steps:​
+*Pencilla Inc.* produces pencils from wooden slats and graphite. Production has four steps:
 
-* Assembling: Glue slats and graphite together​ and shape it.
+* Assembling: Glue slats and graphite together and shape them
 * Colorizing: Add paint and imprint text
-* Testing: Test if the pencil writes and if the colors are visible on paper.
-* Packing: Pack each article in a box​
+* Testing: Check writing quality and color visibility
+* Packing: Pack each article in a box
 
 Each step is executed on a separate workstation, where a worker has to follow
 instructions and may operate a machine.
@@ -18,9 +19,8 @@ instructions and may operate a machine.
 For more information about pencil production, look [here](https://musgravepencil.com/blogs/news/howapencilismade).
 
 ## Setup
-  
-To setup a new project, you need the *MORYX CLI* installed. If you have installed
-VisualStudio already, you would use `dotnet` tools:
+ 
+To setup a new project, you need the *MORYX CLI* installed. If you have installed VisualStudio already, you would use `dotnet` tools:
 
 ```bash
 dotnet tool install -g moryx.cli
@@ -48,9 +48,8 @@ in the following command:
 moryx new PencilFactory --steps Assembling --products GraphitePencil
 ```
 
-> [!NOTE]
-> This training uses a simplified application template that is tailored to this scenario. It is provided by the --branch parameter here.
-> For real world applications you would probably omit --branch for a more advanced default setup or customize it to your needs (see [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or moryx --help for more information).
+> **Note:** This training uses a simplified application template that is tailored to this scenario. It is provided by the --branch parameter here. For real world applications you would probably omit --branch for a more advanced default setup or customize it to your needs (see [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or moryx --help for more information).
+
 
 This should not only leave you with a solution `PencilFactory.sln` inside
 the new folder `PencilFactory`. It also does some initial configuration
@@ -60,11 +59,10 @@ That means, you can directly open it in Visual Studio and dig into it.
 
 Run the application (press `F5`).
 
-> [!NOTE]
-> Starting it for the first time will restore NuGet packages.That can
-> take a few minutes.
+> **Note:** Starting it for the first time will restore NuGet packages. That can take a few minutes.
 
-![Application dashboard](./chapter-1/HomePageOfPencilApp.PNG)
+
+![Application dashboard](./chapter-1/Home.png)
 
 Now that you have a running MORYX instance, you need to create some databases.
 To skip the UI here and speed things up, you'll use the MORYX CLI again.
@@ -94,11 +92,8 @@ Let's take a look at the composition of the pencil *Pencilla Inc.* produces.
 * The pencil has a color (green or brown).
 * Graphite can be in different degrees of hardness, in this scenario *2B*, *B* and *HB*.
 
-> [!NOTE]
-> When defining the hardness of pencils, the number (degree) is
-> put first (2B, 2H, etc.). Since this can't be represented in code, it is
-> switched for names, while for everything else the official format is used. If
-> you are interested, you will find more about [grading and classification here](https://en.wikipedia.org/wiki/Pencil#Grading_and_classification).
+> **Note:** When defining the hardness of pencils, the number (degree) is put first (2B, 2H, etc.). Since this can't be represented in code, it is switched for names, while for everything else the official format is used. If you are interested, you will find more about [grading and classification here](https://en.wikipedia.org/wiki/Pencil#Grading_and_classification).
+
 
 From the details above, the `GraphitePencilType` needs
 
@@ -150,11 +145,10 @@ To create a product, you need to run the application now and head to the
 Click on the plus button to open the 'Product Importer' menu. This title may
 sound a bit confusing, but it lets you add new products.
 
-> [!NOTE]
-> The naming here comes from the fact, that you wouldn't necessarily add
-> products here, but 'import' them from other systems.
+> **Note:** The naming here comes from the fact, that you wouldn't necessarily add products here, but 'import' them from other systems.
 
-![New product](./chapter-1/create-product.png)
+
+![Import GraphitePencilType](./chapter-1/products-import-graphite.png)
 
 * Click on the ProductType dropdown and select **GraphitePencilType**
 * Fill in the fields
@@ -169,7 +163,9 @@ sound a bit confusing, but it lets you add new products.
   in this case.
 * Save your changes by clicking on the save icon at the top right corner.
 
- ![Graphite GP-1B](./chapter-1/AddGraphiteProduct.PNG)
+![Edit product color and hardness](./chapter-1/product-edit-color-hardness-1.png)
+
+![Edit second product properties](./chapter-1/product-edit-color-hardness-2.png)
 
 Repeat the same steps for a second product:
 
@@ -183,7 +179,7 @@ Repeat the same steps for a second product:
 If you did everything correctly, you should end up with something more or less
 similar to the image below.
 
-![Products list](./chapter-1/productList.PNG)
+![Save product properties](./chapter-1/product-edit-color-hardness-3.png)
 
 Now you should have your products `100001-00 Green Pencil GP-1B` and
 `100002-00 Brown Pencil BP-HB`.
@@ -249,10 +245,8 @@ instructions to a worker. So the following resources are needed:
 You will set up these in MORYX within the *Resources UI* by clicking the "+"
 button and selecting the required cell.
 
-> [!NOTE]
-> Make sure to deselect all cells before adding more, so that they will
-> be added to the root level and not as children of other resources. Even though,
-> that wouldn't do any harm.
+> **Note:** Make sure to deselect all cells before adding more, so that they will be added to the root level and not as children of other resources. Even though, that wouldn't do any harm.
+
 
 ![Create resources](./chapter-1/create-resources.png)
 
@@ -436,19 +430,19 @@ Go to *Products* and select the *Product* you want to produce, that is the
 top right corner. Click the *Add Recipe* button, located on the bottom left
 corner to add a new recipe.
 
-![Add a new recipe](./chapter-1/product1Recipe.PNG)
+![Add a new recipe](./chapter-1/recipe-add-1.png)
 
 * Select the **ProductionRecipe**, give the recipe a name `PencilRecipe` and select
 your created workplan `Workplan`.
 
-![Create a new recipe](./chapter-1/pencilRecipe.PNG)
+![Create a new recipe](./chapter-1/recipe-add-2.png)
 
 * Click on **Create** for the recipe to show up in the products UI.
 * For the recipe to be automatically selected when the product is produced, select
 `Default` Classification.
 * Save your changes by clicking on the save icon located at the top right corner.
 
-![Select recipe classification](./chapter-1/firstRecipe.PNG)
+![Select recipe classification](./chapter-1/recipe-add-3.png)
 
 * Repeat the same steps for the second product `100002-00 Green Pencil GP-HB`.
 
@@ -458,7 +452,7 @@ To create a new `Order`. Navigate to the *Orders* UI.
 
 * Click on the add button at the bottom right.
 
-![Orders](./chapter-1/ordersUI.PNG)
+![Orders](./chapter-1/order-create-1.png)
 
 Fill in the details of the `Order`:
 
@@ -472,18 +466,20 @@ Click on the plus button to add this as an operation to the order. One order
 can have multiple operations, but this is not needed here. Click *CREATE* to
 create the order.
 
-* Click on *BEGIN* to start the production of the order.
+![Create order](./chapter-1/order-create-2.png)
 
-![Orders List](./chapter-1/orderList.PNG)
+![Order created](./chapter-1/order-create-3.png)
+
+* Click on *BEGIN* to start the production of the order.
 
 * Enter `1` as the `Partial Amount`.
 * Then click on  *BEGIN* to start the production.
 
-![Begin Production](./chapter-1/startOrder.PNG)
+![Begin production](./chapter-1/production-start-1.png)
 
 Now the production is running!
 
-![Production Running](./chapter-1/orderRunning.PNG)
+![Production running](./chapter-1/production-start-2.png)
 
 That's it, you should now be able to let the pencils flow through the assembling
 cell.
@@ -492,7 +488,9 @@ In order to see the visual instructions, go to the module `Worker Support`.
 Select VisualInstructor as Display, if this is not already done by default.
 You can manually select it by clicking on the Settings icon at the top right.
 
-![Select Display](./chapter-1/SelectDisplay.png)
+![Select VisualInstructor display](./chapter-1/instructor-select-1.png)
+
+![Worker support with instructor](./chapter-1/instructor-select-2.png)
 
 Use the `SUCCESS` and `FAILED` action to make the products flow through the production line
 
@@ -515,7 +513,7 @@ If the issue occurs during the APD at a later stage due to messing up the order 
 
 #### Step 1: Open the Command Center
 
-![Open the Command Center](./chapter-1/commandCenter.png)
+![Open the Command Center](./chapter-1/command-center-open.png)
 
 #### Step 2: Check the databases and create missing ones
 
@@ -527,6 +525,16 @@ If the issue occurs during the APD at a later stage due to messing up the order 
 
 ### I cannot find a resource in the add dialog
 
-If you cannot find an expected resource in the Add Resource dialog, this is usually because the reference to the corresponding assembly has not been loaded.
-Moryx uses reflection to scan the public classes that inherit from Resource. The scan is only performed for resources in the current AppDomain (in this case PencilFactory.App).
+If you cannot find an expected resource in the Add Resource dialog, the corresponding assembly is usually not referenced.
+MORYX uses reflection to find public classes that inherit from `Resource`, but only in assemblies loaded into the AppDomain (here `PencilFactory.App`).
 To fix the problem, you should add any missing project or package references and then check again if the resource you expected is now found.
+
+## Checklist
+
+* [ ] `PencilFactory` created with the CLI and running
+* [ ] Products `100001` (Green) and `100002` (Brown) created
+* [ ] AssemblingCell linked to VisualInstructor
+* [ ] Workplan, recipe, and first order completed in Worker Support
+
+> [Table of contents](README.md) | [Next](chapter-2-drivers.md)
+
