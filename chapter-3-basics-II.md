@@ -4,7 +4,7 @@ In this chapter you will learn how to find the right Cell depending on a product
 
 The manufacturer realized that only one ColorizingCell, in which the paint always has to be changed, isn't really efficient. He decided to add another one. Now for each color there is one cell.
 
-In order to define, which cell uses which color, first add a property `Color` to the ColorizingCell and set the color in the [Capabilities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/capabilities.md) to let Moryx know what the cell is capable of. In this case using a specific color. Remember EntrySerialize means the property can be set in the UI by editing the corresponding resource.
+In order to define, which cell uses which color, first add a property `Color` to the ColorizingCell and set the color in the [Capabilities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/abstractions/processing/capabilities.md) to let Moryx know what the cell is capable of. In this case using a specific color. Remember EntrySerialize means the property can be set in the UI by editing the corresponding resource.
 
 ```cs
 [ResourceRegistration] 

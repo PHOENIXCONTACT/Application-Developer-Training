@@ -80,13 +80,13 @@ moryx exec post-setup
 
 ## Products
 
-At first, you will model [products](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/module-products/product-definition.md).
+At first, you will model [products](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/module-products/product-definition.md).
 Products represent the articles to be manufactured. MORYX differentiates between
 `ProductType` and `ProductInstance`. The `ProductType` is what you can order
 in a catalog, while the `ProductInstance` is what you would receive after ordering:
 an instance of the product with its unique serial number. In order for a `ProductType`
 to be produced, it needs a corresponding `ProductInstance`. For further
-information on how to create a product, see [this](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-create-a-product.md).
+information on how to create a product, see [this](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/tutorials/how-to-create-a-product.md).
 
 Let's take a look at the composition of the pencil *Pencilla Inc.* produces.
 
@@ -108,7 +108,7 @@ From the details above, the `GraphitePencilType` needs
 You will find the `GraphitePencilType` among all other `<Product>Types` in the
 `PencilFactory` package within the `Products` folder.
 
-Paste the following code and for properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/framework/Serialization/entry-convert.md#entryserialize-attribute)
+Paste the following code and for properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/framework/Serialization/entry-convert.md#entryserialize-attribute)
 attribute. For properties to be saved in the database, use the [DataMember](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute?view=net-7.0) attribute.
 
 ``` cs
@@ -190,7 +190,7 @@ Now you should have your products `100001-00 Green Pencil GP-1B` and
 The next challenge is to actually let a resource produce the pencils. So far there is
 no script that describes how the pencils are produced.
 Therefore, the next step is to model a resource after which we can create a **Recipe** and a
-[Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md).
+[Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/abstractions/processing/workplans.md).
 
 ## Resources
 
@@ -380,7 +380,7 @@ public override void SequenceCompleted(SequenceCompleted completed)
 
 In order to produce pencils, you have to establish the connection between cells
 and products: MORYX needs to know, how a product flows through the production
-line. This is not done in the code, but modelled within [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md).
+line. This is not done in the code, but modelled within [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/abstractions/processing/workplans.md).
 
 This allows you to define in a rather abstract way, *what* needs to be done without
 going much more into details. MORYX will find the way later, *how* this is done

@@ -4,7 +4,7 @@ In this chapter you will implement the ColorizingCell and the TestingCell.
 Both of them are automatic cells, which don't need any user interaction.
 Correspondingly there are no visual instructions. Instead there is some kind of hardware, which needs to be connected to MORYX.
 
-For the cell to communicate with the hardware a [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-build-a-driver.md) is needed.
+For the cell to communicate with the hardware a [Driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/tutorials/how-to-build-a-driver.md) is needed.
 In here the communication is encapsulated.
 
 As there are many different ways to communicate, there are also many different implementations of drivers.
@@ -17,7 +17,7 @@ Common interfaces for drivers are `IMessageDriver` and `IInOutDriver`.
 
 > [!NOTE]  
 > If you want to learn more about how simulation works in MORYX or how simulated drivers interact with cells, the full open‑source tutorial is available here:  
-> 🔗 https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-simulate-my-production.md  
+> 🔗 https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/tutorials/how-to-simulate-my-production.md  
 > This guide explains the architecture behind the simulation module, the states of a simulation driver, and how `ISimulationDriver` can be implemented to emulate hardware behavior. 
 > It extends the concepts shown in this chapter with more background and advanced examples.
 
