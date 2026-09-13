@@ -1,16 +1,44 @@
 # Chapter 12 - Advanced Topics
 
-The line is productive. *Pencilla Inc.* now asks for the extras that show up in almost every real project: clearer order assignment, texts in more than one language, notifications for operators, richer activity results, and a visible cell state on Colorizing.
+The line is productive. *Pencilla Inc.* now asks for the extras that show up in almost every real project: clearer order assignment, texts in more than one language, notifications for operators, richer activity results and a visible cell state on Colorizing.
 
 > [Table of contents](README.md) | [Previous](chapter-11-cell-selectors.md)
 
-Each section is short, then applied to PencilFactory:
+**On this page:** [Goals](#learning-goals) | [Starting point](#before-you-start) | [Practice](#practice) | [Check your reasoning](#check-your-reasoning) | [Troubleshooting](#troubleshooting)
 
-* **Assignments:** Which product and recipe belong to an operation
-* **Localization:** Texts in multiple languages (`.resx`)
-* **Notifications:** Inform operators after events
-* **ActivityResults:** More than Success and Failed, for example Retry
-* **States:** Cell operating state (Idle, Setup, Production) for the UI
+## Learning goals
+
+By the end of this chapter, you should be able to:
+
+* Activate assignment plugins and localize notification texts (`.resx`)
+* Optionally add a third activity result and wire a workplan retry loop
+* Drive a visible ColorizingCell state machine (Idle / Setup / Production)
+
+## Where you are in the journey
+
+* Chapters 1-11: productive, seeded, integrated, load-aware line
+* **This chapter**: common project extras (assignments, localization, notifications, states)
+* End of the ADP tour: apply the patterns to your own scenario
+
+## Before you start
+
+The factory should run with the seeded products and a working ColorizingCell (including ColorChange setup).
+
+This chapter shows several **optional** extension points. Work through the sections you need. Practice asks you to pick **one** requirement and implement a small variation yourself.
+
+## What you will touch
+
+| Kind | Items |
+| ---- | ----- |
+| Projects / files | `PencilFactory.Orders` assignments, `Properties/Strings*.resx`, Colorizing + Notifications, Assembling results, Colorizing `States/` |
+| Classes | Product/Recipe assignment, `INotificationSender`, state classes, optional `OutOfTolerance` |
+| UI | OrderManagement plugin names, Notifications, Resources `CellState`, Worker Support / workplan |
+
+For new files, let Visual Studio add missing usings (`Ctrl + .`).
+
+## Choose your extension focus
+
+The sections below are separate worked examples. Follow them in order for a full tour or jump to Assignments, Localization + Notifications or States. ActivityResults is optional (workplan change). In [Practice](#practice) implement **one** independent change, only check off what you actually did.
 
 ## Assignments
 
@@ -18,6 +46,9 @@ When creating an operation, OrderManagement must resolve two things: which
 **product** and which **recipe**. That is what assignment plugins are for. The CLI template
 already creates files, but they only run when you enter them as
 PluginName in the Command Center. As long as the default assignment is active, you will not see your logs.
+
+> **Concept:** **Assignments** plug into OrderManagement so *your* code chooses product and
+> recipe (here: load Default + log). Without setting PluginName in config, the CLI stubs never run.
 
 In our example the plugins stay thin functionally: They load type or Default recipe
 as before and additionally write to the operations logger. That way you see that *your*
@@ -55,7 +86,7 @@ public override async Task<ProductType> SelectProductAsync(Operation operation, 
 
 ### PencilFactoryRecipeAssignment.cs
 
-Replace both methods, load Default recipe, link order/operation number, and log:
+Replace both methods, load Default recipe, link order/operation number and log:
 
 ```csharp
 public override async Task<IReadOnlyList<IProductRecipe>> SelectRecipesAsync(Operation operation, IOperationLogger operationLogger, CancellationToken cancellationToken)
@@ -89,11 +120,11 @@ public override Task<bool> ProcessRecipeAsync(IProductRecipe clone, Operation op
 }
 ```
 
-Placeholders `{0}` and `{1}`: This is C# syntax for `string.Format`. `{0}` = first argument after (`recipe.Name`), `{1}` = second (`operation.TotalAmount`). `IOperationLogger` requires these numbers; `{Name}` would crash.
+Placeholders `{0}` and `{1}`: This is C# syntax for `string.Format`. `{0}` = first argument after (`recipe.Name`), `{1}` = second (`operation.TotalAmount`). `IOperationLogger` requires these numbers. `{Name}` would crash.
 
 ### Command Center
 
-1. Module OrderManagement, Register CONFIGURATION
+1. Module OrderManagement, Configuration tab
 2. ProductAssignment, PluginName: `PencilFactoryProductAssignment`
 3. RecipeAssignment, PluginName: `PencilFactoryRecipeAssignment`
 4. SAVE and RESTART, then reincarnate the module
@@ -105,6 +136,12 @@ Placeholders `{0}` and `{1}`: This is C# syntax for `string.Format`. `{0}` = fir
 Create an order. Under messages you should now see our own logs.
 
 ![Order messages showing PencilFactory assignment logs](./chapter-12/order-messages-assignment.png)
+
+### Check your progress
+
+* PluginNames set in OrderManagement. New order messages show PencilFactory assignment logs
+
+---
 
 ## Localization
 
@@ -124,7 +161,7 @@ In Visual Studio:
 Keys (example):
 
 | Key | EN | DE |
-| --- | --- | --- |
+| ---- | ----- | --- |
 | `ColorChangedTitle` | `Color changed` | `Farbe gewechselt` |
 | `ColorChangedMessage` | `Cell {0} is now set to {1}.` | `Zelle {0} ist jetzt auf {1} eingestellt.` |
 
@@ -141,13 +178,13 @@ Example:
 - DE: `Zelle ColorizingCell1 ist jetzt auf Brown eingestellt.`
 - EN: `Cell ColorizingCell1 is now set to Brown.`
 
-The placeholders `{0}`/`{1}` stay in the same place in all languages; only the surrounding text is translated.
+Keep the placeholder indices associated with the same values in every language. Their position in the sentence may change to fit the translation.
 
 ## Notifications (code in ColorizingCell)
 
 ### Purpose
 
-After a successful ColorChange, a notification should appear in the [Notification](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/module-notifications/index.md) module and in the notification bar. As a small example we use the localization strings to demonstrate different languages.
+After a successful ColorChange, a notification should appear in the [Notification](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/module-notifications/index.md) module and in the notification bar. As a small example we use the localization strings to demonstrate different languages.
 
 ### Package reference
 
@@ -199,6 +236,12 @@ public void Acknowledge(Notification notification, object tag) => NotificationAd
 
 ![Notification after color changed on ColorizingCell](./chapter-12/notification-color-changed.png)
 
+### Check your progress
+
+* `Strings.resx` / `Strings.de.resx` build. ColorChange Success shows localized notification in DE and EN
+
+---
+
 ## ActivityResults (more than Success / Failed)
 
 By default the CLI creates only two outputs for an activity (Success and Failed).
@@ -234,6 +277,8 @@ workplan.AddStep(new AssemblingTask(), new AssemblingParameters
 }, start, assembled, failed, start);
 ```
 
+After changing the importer code, the already saved workplan still has its old connections. For this exercise, update that workplan in the UI to add the retry connection, or recreate the seed on a clean training copy. Do not rerun the importer over existing records just to refresh one workplan.
+
 ### 3. Cell
 
 The cell returns result `2` when worker assistance reports result `2` (`AssemblingCell` calls `CreateResult(instructionResult)`).
@@ -244,10 +289,20 @@ UI test: Start order, Assembling, in worker assistance result 2 (Out of toleranc
 
 ![Workplan with Out of tolerance loop back to Assembling](./chapter-12/workplan-out-of-tolerance-loop.png)
 
+### Check your progress
+
+* (Optional) Out of tolerance result loops back to Assembling instead of Failed
+
+---
+
 ## States: Cell State Machine
 
-A [State Machine](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/framework/state-machine.md)
+A [State Machine](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/framework/state-machine.md)
 on the cell is application logic, not the workplan and not the driver.
+
+> **Concept:** The **workplan** sequences product steps. The **driver** talks to hardware.
+> A **cell state machine** models operating mode for operators/UI (Idle / Setup / Production).
+> The cell raises events. State classes decide the next state. Keep that logic out of long `switch` blocks in the cell.
 
 You model operating states (Idle, Setup, Production). The CLI generates state classes
 and `IAsyncStateContext`. The framework changes states when you call `NextStateAsync`
@@ -263,14 +318,6 @@ and in the Resources UI you see the state independently of the current workplan 
 
 `CellState` in Resources UI: Idle / Setup / Production, independent of workplan & driver.
 
-### CLI
-
-```bash
-moryx add states ColorizingCell --states "Idle, Setup, Production"
-```
-
-Creates `src/PencilFactory.Resources.Colorizing/States/*` + `IAsyncStateContext`.
-
 ### ColorizingCell.cs
 
 #### Step 1 - CLI
@@ -283,7 +330,7 @@ dotnet moryx add states ColorizingCell --states Idle,Setup,Production
 
 Creates among others `States/ColorizingCellStateBase.cs`, `IdleState.cs`, ... and adds `IAsyncStateContext` to `ColorizingCell`.
 
-Reference in the repo: `PencilFactory.Resources.Colorizing/States/`
+These paths belong to your generated PencilFactory application, not to the training repository.
 
 #### Step 2 - Property in ColorizingCell.cs
 
@@ -346,7 +393,7 @@ Call `_ = _state?.OnActivityCompletedAsync();` wherever an **activity actually f
 |-------|----------------------------------|
 | `ColorChangeCompleted` (setup via Instructor) | **yes** |
 | `OnInputChanged` when `ProcessResult` completes Colorizing | **yes** |
-| `SequenceCompleted` | **no**, activity is already done; here you only open a new ReadyToWork |
+| `SequenceCompleted` | **no**, activity is already done. Here you only open a new ReadyToWork |
 | `OnInputChanged` for `Ready` (Pull RTW) | **no**, no activity finished |
 
 `ProcessAborting`, when aborting an active activity:
@@ -463,10 +510,14 @@ or temporarily raise Colorizing execution time (e.g. `5000`) in MachineSimulator
 `Production` stays visible longer. Setup stays visible longer because it waits for
 the worker.
 
-![MachineSimulator ColorizingActivity ExecutionTime set to 500 ms](./chapter-12/simulator-colorizing-execution-5000.png)
+![MachineSimulator ColorizingActivity ExecutionTime set to 5000 ms](./chapter-12/simulator-colorizing-execution-5000.png)
 
 
 Start an order that requires a ColorChange setup and watch `CellState`: Idle, then Setup (ColorChange), then Idle, then Production (Colorizing), then Idle.
+
+### Check your progress
+
+* `CellState` moves Idle -> Setup -> Idle -> Production -> Idle (Production may be brief under short simulator times)
 
 ## Checklist
 
@@ -476,5 +527,62 @@ Start an order that requires a ColorChange setup and watch `CellState`: Idle, th
 * [ ] Optional: `OutOfTolerance` as third ActivityResult and workplan retry
 * [ ] States created via CLI, `CellState` and transitions wired in ColorizingCell
 * [ ] CellState changes checked in the UI (Idle, Setup, Idle, Production, Idle)
+
+## Summary
+
+Assignment plugins customize resolution, resource strings supply localized text, notifications report events, activity results branch workplans and cell states represent local operating mode. Choose an extension point according to the responsibility you need to change.
+
+## Reflect
+
+1. Why does a new assignment implementation need configuration before it is used?
+2. How do cell state, driver state and workplan progress differ?
+3. Why can a third activity result (like Out of tolerance) be useful in a workplan?
+
+## Practice
+
+Pick **one** task and implement it:
+
+1. **Notification**: Publish a new localized message (English + German) when the ColorizingCell enters **Production**.
+2. **Cell states**: On Assembling or Packing, show Idle / working in Resources and return to Idle when the activity ends.
+
+<details>
+<summary>Hint</summary>
+
+For (1), look at where ColorChange already publishes a notification and do something similar when the cell state becomes Production. For (2), mirror the Colorizing state pattern on the other cell.
+
+</details>
+
+## Check your reasoning
+
+<details>
+<summary>Compare your answers after attempting the questions and practice</summary>
+
+1. OrderManagement uses the PluginName from config. Compiling a class is not enough. You must activate it.
+2. The workplan describes progress through product tasks. Driver state represents communication/simulation. Cell 
+state models local operation such as Setup or Production.
+3. So the worker (or machine) can choose "try again" instead of only Success or Failed. In the workplan you wire that result back to the same step and you still need Failed (or another exit) so the order can end.
+
+**Practice feedback:** For (1), the new text should appear when Production starts. For (2), Resources should show Idle again after the activity.
+
+</details>
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| ---- | ----- |
+| No assignment logs | PluginName not set / module not restarted, still on default assignment |
+| Notification missing | `Moryx.Notifications` package, `INotificationSender` / adapter not wired, ColorChange not Success |
+| Wrong language | UI culture / missing `Strings.de.resx` key |
+| `CellState` empty or stuck | `WithAsync` on wrong base (no `[StateDefinition]`), transitions not called |
+| Production state invisible | Simulator finishes too fast. Raise Colorizing ExecutionTime temporarily |
+| OutOfTolerance does nothing | Workplan fourth connector not wired back, enum value mismatch |
+
+See also [Troubleshooting](troubleshooting.md) and [Help](README.md#help).
+
+## End of the Application Developer Training
+
+You finished the ADP. PencilFactory now covers the full path from Assembling through packing, seed, ERP intake, cell selection and the extras in this chapter.
+
+Continue with the [MORYX Framework docs](https://github.com/PHOENIXCONTACT/MORYX-Framework/tree/main/docs), the [Glossary](glossary.md) and [Help](README.md#help) when you build further.
 
 > [Table of contents](README.md) | [Previous](chapter-11-cell-selectors.md)

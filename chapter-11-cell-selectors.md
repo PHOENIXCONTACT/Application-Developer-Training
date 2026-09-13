@@ -1,21 +1,51 @@
 # Chapter 11 - CellSelectors
 
-One testing station cannot keep up when several orders run in parallel. *Pencilla Inc.* adds a second automatic tester and a slower manual backup for Brown Premium. You distribute work with Capabilities, Constraints, and CellSelectors.
+One testing station cannot keep up when several orders run in parallel. *Pencilla Inc.* adds a second automatic tester and a slower manual backup for Brown Classic. You distribute work with Capabilities, Constraints and CellSelectors.
 
 > [Table of contents](README.md) | [Previous](chapter-10-module-adapter.md) | [Next](chapter-12-advanced-topics.md)
 
-Until now you had one testing station (T-1): `TestingCell` with `SimulatedTestingDriver`, fully automatic.
+**On this page:** [Goals](#learning-goals) | [Starting point](#before-you-start) | [Practice](#practice) | [Check your reasoning](#check-your-reasoning) | [Troubleshooting](#troubleshooting)
 
-Extend it like this:
+## Learning goals
 
-* Two automatic testing machines (T-1, T-2): distribute load fairly
-* One manual backup station (T-3): slower, but helps under high load. It is only for Brown Premium (`100002`). Other colors are rejected via a constraint.
+By the end of this chapter, you should be able to:
 
-The Process Engine picks a testing cell in three steps:
+* Distinguish automatic vs manual testing cells with Capabilities and Constraints
+* Implement `TestingOptimizer` and `LoadBalancer` CellSelectors and configure SortOrder
+* Extend the ResourceInitializer with T-2 / T-3 and verify routing under load
+
+## Where you are in the journey
+
+* Chapters 1-10: full line, seed, ERP intake
+* **This chapter**: intelligent testing-cell selection under load
+* Chapter 12: assignments, localization, notifications, states
+
+## Before you start
+
+The imported products and Default recipes should be in place and at least one automatic TestingCell should complete Testing orders.
+
+You will add more testing cells and selectors. Keep the existing pencil workplan.
+
+## What you will touch
+
+| Kind | Items |
+| ---- | ----- |
+| Projects / files | `TestingCapabilities`, `ManualTestingCell`, `PencilProductConstraints`, `CellSelectors/*`, `PencilFactoryInitializer` |
+| Classes | `TestingOptimizer`, `LoadBalancer`, `ManualTestingCell`, constraint helpers |
+| UI | ProcessEngine ResourceSelectors, Orders MaxRunningOperations, MachineSimulator times, Processes view |
+
+For new files, let Visual Studio add missing usings (`Ctrl + .`).
+
+> **Concept:** Capabilities answer *can this cell do the activity?* Constraints and CellSelectors answer
+> *which of the matching cells should run it under load or product rules?* Keep capability matching first;
+> selectors only reorder or filter an already valid candidate set.
+
+The selection stages connect as follows:
 
 ![How a TestingActivity finds a cell](./chapter-11/testing-cell-selection-flow.png)
 
-More on [Cell Selectors](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/control-system/cell-selector.md) and [Constraints](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/constraints.md) in the framework documentation.
+More on [Cell selectors](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/abstractions/control-system/cell-selector.md)
+in the framework.
 
 ## Extend TestingCapabilities
 
@@ -45,7 +75,7 @@ Constraints and Selectors.
 
 Path: `src/PencilFactory.Resources.Testing/TestingCell.cs`
 
-Action: Change one line in `OnInitializeAsync`; the automatic cell sets `ManualTesting = false`:
+Action: Change one line in `OnInitializeAsync`, the automatic cell sets `ManualTesting = false`:
 
 ```csharp
 // Before:
@@ -93,8 +123,8 @@ Action: New file, modeled after `AssemblingCell` (VisualInstructor, no Driver). 
 namespace PencilFactory.Resources.Testing;
 
 /// <summary>
-/// Manual testing workplace for premium Brown Premium graphite pencils
-/// Uses a process constraint so only Brown Premium orders are dispatched here
+/// Manual testing workplace for Brown Classic graphite pencils
+/// Uses a process constraint so only Brown Classic orders are dispatched here
 /// </summary>
 [ResourceRegistration]
 public class ManualTestingCell : Cell, IAsyncStateContext
@@ -218,6 +248,13 @@ protected override void Populate(Process process, Parameters instance)
 
 Auto cells ignore the text (Driver). Without `Populate` you only see empty SUCCESS/Failed buttons at T-3.
 
+### Check your progress
+
+* `ManualTesting` distinguishes auto vs manual capabilities
+* `ManualTestingCell` attaches Brown constraint on ReadyToWork, `Populate` yields readable Manual text
+
+---
+
 ## Create CellSelectors
 
 Folder: `src/PencilFactory.ControlSystem/CellSelectors/`
@@ -247,7 +284,7 @@ public class TestingOptimizerConfig : CellSelectorConfig
 
 ### TestingOptimizer.cs (new)
 
-Below the threshold the optimizer returns only auto cells; from the threshold the full list including Manual:
+Below the threshold the optimizer returns only auto cells. From the threshold, the full list including Manual:
 
 ```csharp
 
@@ -290,7 +327,7 @@ Example: With 2 auto cells and threshold 3, the manual cell (T-3) only comes in 
 
 ### LoadBalancer.cs (new)
 
-The LoadBalancer does not change the set of candidates, only the order - least loaded cell first:
+The LoadBalancer does not change the set of candidates, only the order: least loaded cell first:
 
 ```csharp
 namespace PencilFactory.ControlSystem.CellSelectors;
@@ -392,7 +429,7 @@ manualTestingCell.Name = "Manual Testing Cell";
 manualTestingCell.VisualInstructor = instructor;
 manualTestingCell.Value = 0;
 manualTestingCell.AcceptedColor = PencilColor.Brown;
-lineGroup.Children.Add(Place(graph, "T-3", "Manual testing (Brown Premium)", "handyman", 0.66, 0.52, manualTestingCell));
+lineGroup.Children.Add(Place(graph, "T-3", "Manual testing (Brown Classic)", "handyman", 0.66, 0.52, manualTestingCell));
 ```
 
 ### Factory children: add second driver
@@ -402,11 +439,45 @@ factory.Children.Add(testingDriver1);
 factory.Children.Add(testingDriver2);
 ```
 
+### Prepare separate displays for parallel work
+
+Before clearing/recreating resources for the load test, extend the chapter-9 initializer. After the existing factory and cells have been created and **before returning ResourceInitializerResult**, add:
+
+```csharp
+var assemblingInstructor = graph.Instantiate<VisualInstructor>();
+assemblingInstructor.Name = "Assembling Instructor";
+assemblingCell.VisualInstructor = assemblingInstructor;
+factory.Children.Add(assemblingInstructor);
+
+var colorizingInstructor = graph.Instantiate<VisualInstructor>();
+colorizingInstructor.Name = "Colorizing Instructor";
+colorizingCell.VisualInstructor = colorizingInstructor;
+factory.Children.Add(colorizingInstructor);
+
+var testingInstructor = graph.Instantiate<VisualInstructor>();
+testingInstructor.Name = "Manual Testing Instructor";
+manualTestingCell.VisualInstructor = testingInstructor;
+factory.Children.Add(testingInstructor);
+
+var packingInstructor = graph.Instantiate<VisualInstructor>();
+packingInstructor.Name = "Packing Instructor";
+packingCell.VisualInstructor = packingInstructor;
+factory.Children.Add(packingInstructor);
+```
+
+The previous shared instructor can remain as an unused resource. In Worker Support select the display of the station you are operating. Use separate browser tabs when confirming different stations. The earlier screenshots show the sequential example's shared display.
+
 ### Afterwards
 
 1. Clear Resources DB
 2. Command Center, ResourceManager, Console: Initialize Resource
 3. Check: A-1, C-1, T-1, T-2, T-3, P-1 + both drivers under Pencil Manufactory
+
+### Check your progress
+
+* `TestingOptimizer` and `LoadBalancer` compile, initializer creates T-1, T-2, T-3 after DB clear + Initialize
+
+---
 
 ## ProcessEngine + Orders Management (Command Center)
 
@@ -429,11 +500,15 @@ factory.Children.Add(testingDriver2);
 Selector chain:
 
 | SortOrder | Plugin | Task |
-| --- | --- | --- |
+| ---- | ----- | --- |
 | 0 | TestingOptimizer | Manual only under load |
 | 1 | LoadBalancer | Fair distribution T-1 / T-2 |
 
 Order matters: LoadBalancer after Optimizer.
+
+### Check your progress
+
+* ProcessEngine: TestingOptimizer (SortOrder 0), LoadBalancer (SortOrder 1). MaxActiveJobs / MaxRunningOperations raised for parallel tests
 
 ## Testing
 
@@ -444,20 +519,20 @@ Note: Under the "Processes" view you can track which cell the ProcessEngine choo
 Each pencil runs the workplan **in sequence**: Assembling -> Colorizing -> Testing.
 With **one** Assembling cell and **one** Colorizing cell, pieces rarely pile up at
 Testing at the same time. Auto cells T-1/T-2 usually finish before a third Testing
-activity is waiting  -  so the Optimizer threshold is almost never reached and T-3
+activity is waiting, so the Optimizer threshold is almost never reached and T-3
 stays unused. That is expected with this layout, not a broken Manual cell.
 
 ### Practical trick: shorten Colorizing in MachineSimulator
 
 The bottleneck before Testing is often Colorizing (default ~2400 ms). If Colorizing
-is much faster, more pencils reach Testing while T-1/T-2 are still busy  -  then the
+is much faster, more pencils reach Testing while T-1/T-2 are still busy. Then the
 Optimizer can include Manual.
 
 In **Command Center** -> **MachineSimulator** -> **CONFIGURATION**:
 
 1. **Specific execution times** -> add / set:
    - **Activity:** `PencilFactory.Activities.ColorizingStep.ColorizingActivity`
-   - **ExecutionTime:** `500 ms)
+   - **ExecutionTime:** `500` ms
    - **CellId:** `0` (all cells)
 2. **SAVE + RESTART**
 3. Start several **Brown** orders (`100002`) in parallel and work Assembling promptly
@@ -472,31 +547,30 @@ need to change Testing execution time or Success rate for that.
 One order is enough.
 
 - Testing only T-1 / T-2 (automatic)
-- T-3 gets nothing. Constraint: only Brown Premium.
+- T-3 gets nothing. Constraint: only Brown Classic.
 
 ### B) Brown (100002): Optimizer + Constraints
 
-Start several Brown orders in parallel (ideally with Colorizing at 500 ms as in B0).
+Start several Brown orders in parallel (ideally with Colorizing at 500 ms as described above).
 
 - Normal / low load: like Green, only T-1 and T-2
 - Under load (Threshold 1, enough **parallel** processes already at Testing): additionally Instruction at T-3 (Manual)
 - Raise threshold to 3: T-3 less often
 
-Here T-1, T-2, and T-3 can all be in play at once - that is the Optimizer, not a pure LoadBalancer test.
+Here T-1, T-2 and T-3 can all be in play at once. That is the Optimizer, not a pure LoadBalancer test.
 
 ### C) LoadBalancer: T-1 / T-2
 
-Several parallel orders with Green (`100001`) in parallel, not Brown Premium.
+Several parallel orders with Green (`100001`) in parallel, not Brown Classic.
 
 - Only auto cells (T-3 excluded via constraint)
-- Observe: jobs alternate between T-1 and T-2
+- Observe several activity assignments: both T-1 and T-2 should be used under load. Do not infer a strict alternating schedule from this selector. Completion timing and available candidates affect each choice.
 
-Note: VisualInstructor under parallel operation. One shared `VisualInstructor` for
-all manual stations is enough for sequential tests. If you start several operations
-in parallel (`MaxRunningOperations` / `MaxActiveJobs` greater than 1), you should assign
-a separate instructor per cell in the initializer. Otherwise A-1, C-1, T-3, and
-P-1 share the same instruction list. That can lead to race conditions and errors like
-`An item with the same key has already been added.`
+If a manual station appears idle, first select its dedicated display in Worker Support. Confirm the instructor references from the initializer before interpreting a missing instruction as a routing error.
+
+### Check your progress
+
+* Green: only T-1/T-2. Brown under load can reach T-3, repeated parallel Green activities use both automatic cells (exact alternation is not required)
 
 ## Checklist
 
@@ -506,7 +580,56 @@ P-1 share the same instruction list. That can lead to race conditions and errors
 * [ ] `TestingOptimizer` and `LoadBalancer` created and configured in ProcessEngine
 * [ ] Initializer extended with T-2 and T-3, resources re-initialized
 * [ ] MaxActiveJobs / MaxRunningOperations set
-* [ ] Tests A-C (Green, Brown Premium, LoadBalancer) completed
-* [ ] Colorizing `ExecutionTime` 500 ms in MachineSimulator -  sees Manual under load
+* [ ] Tests A-C (Green, Brown Classic, LoadBalancer) completed
+* [ ] Colorizing `ExecutionTime` 500 ms in MachineSimulator so Manual appears under load
+
+## Summary
+
+Capabilities establish eligibility, constraints restrict a resource's accepted processes and selectors filter/rank candidates. The optimizer's threshold depends on open activities and available automatic cells. Testing under load requires observing several assignments, not a single screenshot.
+
+## Reflect
+
+1. Why must Green stay off T-3 even when the optimizer admits manual cells?
+2. How do the optimizer and load balancer change the candidates differently?
+3. Why can changing Colorizing execution time affect Testing-cell use?
+
+## Practice
+
+Compare **ActivitiesPerAutoCellThreshold = 1** and **3** with a similar Brown workload. Before each run, predict whether manual Testing (T-3) should become more or less likely. Note which cells actually get Testing assignments.
+
+Use a Green order as control: it must not reach T-3 at either threshold. Restore threshold **1** afterward.
+
+<details>
+<summary>Hint</summary>
+
+Threshold **1** lets the manual cell in sooner when Testing is busy. Threshold **3** waits longer before using T-3. Green never goes to T-3 because that cell only accepts Brown. The threshold does not change that.
+
+</details>
+
+## Check your reasoning
+
+<details>
+<summary>Compare your answers after attempting the questions and practice</summary>
+
+1. The Brown constraint remains an eligibility condition for the manual resource. A selector cannot make a Green process satisfy it.
+2. TestingOptimizer can drop manual candidates when load is low. LoadBalancer only ranks the cells that remain. It does not promise strict alternation.
+3. Faster Colorizing can feed Testing before previous Testing activities finish, increasing concurrent demand. Assembling speed and other limits still affect that demand.
+
+**Practice feedback:** Threshold 3 should make T-3 less likely than threshold 1 under similar load. Green never on T-3. Note what you saw. A few runs are not a performance proof.
+
+</details>
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| ---- | ----- |
+| T-3 never used | Threshold not reached, Colorizing bottleneck, only Green orders (constraint) |
+| Green reaches T-3 | Constraint missing / wrong `AcceptedColor` / ReadyToWork without constraint |
+| Always same auto cell | LoadBalancer not configured or SortOrder before Optimizer incorrectly |
+| Worker Support shows wrong / overlapping instructions when several orders run | Several manual cells still share **one** VisualInstructor. With MaxRunningOperations > 1 they can push instructions to the same display. Give Assembling, Colorizing, Manual Testing and Packing each their own instructor (as in the initializer change above) |
+| Selectors have no effect | ProcessEngine not saved/restarted, wrong plugin names |
+| No Testing cell at all | Capabilities/`ProvidedBy` broken, see [Troubleshooting](troubleshooting.md#processengine-routing-no-matching-cell) |
+
+See also [Troubleshooting](troubleshooting.md) and [Help](README.md#help).
 
 > [Table of contents](README.md) | [Previous](chapter-10-module-adapter.md) | [Next](chapter-12-advanced-topics.md)

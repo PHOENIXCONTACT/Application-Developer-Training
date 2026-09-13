@@ -1,8 +1,10 @@
 # Chapter 1 - Basics
 
-*Pencilla Inc.* wants to take the first step toward a digital factory. You start small: create **PencilFactory** and bring the manual Assembling station online. Colorizing, Testing, and Packing wait for later chapters.
+Your customer *Pencilla Inc.* wants to take the first step toward a digital factory. You start small: create **PencilFactory** and bring one manual station online.
 
 > [Table of contents](README.md) | [Next](chapter-02-drivers.md)
+
+**On this page:** [Use Case](#use-case) | [Goals](#learning-goals) | [Starting point](#before-you-start) | [Practice](#practice) | [Check your reasoning](#check-your-reasoning) | [Troubleshooting](#troubleshooting)
 
 ## Use Case
 
@@ -13,14 +15,38 @@
 * Testing: Check writing quality and color visibility
 * Packing: Pack each article in a box
 
-Each step is executed on a separate workstation, where a worker has to follow
-instructions and may operate a machine.
+Each step runs on a separate workstation. A worker follows instructions and may
+operate a machine.
 
 For more information about pencil production, look [here](https://musgravepencil.com/blogs/news/howapencilismade).
 
+This chapter covers **Assembling** only. The other three stations come in later
+chapters, once you can run Assembling from an order through to completion.
+
+## Learning goals
+
+By the end of this chapter, you should be able to:
+
+* Create a MORYX application with the CLI and run it with databases ready
+* Model `ProductType` properties for the UI and persistence, configure AssemblingCell + VisualInstructor
+* Connect products to cells with a Workplan and Recipe, start an Order and confirm the instruction in Worker Support
+
+## Where you are in the journey
+
+* **Assembling**: this chapter (manual cell, instructions in Worker Support)
+* Colorizing: chapter 2
+* Testing / Packing: chapters 4 and 7-8
+
+Later chapters extend that same line. Each chapter states what is new.
+
+## Before you start
+
+Start from an empty training folder after you installed the tools from the README. This chapter creates the application from scratch. Later chapters continue on the same solution.
+
 ## Setup
- 
-To setup a new project, you need the *MORYX CLI* installed. If you have installed VisualStudio already, you would use `dotnet` tools:
+
+To setup a new project, you need the *MORYX CLI* installed. If you have installed
+Visual Studio already, you would use `dotnet` tools:
 
 ```bash
 dotnet tool install -g moryx.cli
@@ -40,27 +66,24 @@ use `PencilFactory` as the project name but it could also be a machine name, for
 example. Optionally you can provide the steps and products already to the `new`
 command. The products (`GraphitePencil`, made from `Slat` and `Graphite`) have already been
 identified, but only `GraphitePencil` is needed so far.
-Even though, there are four production steps, in the first iteration,
-only the `Assembling` step should be covered by MORYX. These information result
+Even though there are four production steps, in the first iteration,
+only the `Assembling` step should be covered by MORYX. This information results
 in the following command:
 
 ```bash
 moryx new PencilFactory --steps Assembling --products GraphitePencil
 ```
 
-> **Note:** This training uses a simplified application template that is tailored to this scenario. It is provided by the --branch parameter here. For real world applications you would probably omit --branch for a more advanced default setup or customize it to your needs (see [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or moryx --help for more information).
-
+> **Note:** This training uses a simplified application template tailored to this scenario. For real-world applications you would usually pick a different default setup or customize it (see the [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or `moryx --help`).
 
 This should not only leave you with a solution `PencilFactory.sln` inside
-the new folder `PencilFactory`. It also does some initial configuration
-and ships empty databases.
+the new folder `PencilFactory`, it also does some initial configuration.
 
 That means, you can directly open it in Visual Studio and dig into it.
 
 Run the application (press `F5`).
 
 > **Note:** Starting it for the first time will restore NuGet packages. That can take a few minutes.
-
 
 ![Application dashboard](./chapter-01/Home.png)
 
@@ -76,21 +99,64 @@ option.
 moryx exec post-setup
 ```
 
+## Project structure
+
+After `moryx new`, open `PencilFactory.sln` in Visual Studio. The solution contains several projects. Almost every chapter only changes a few of them.
+
+![Solution Explorer](./chapter-01/solution-explorer.png)
+
+The template uses the SDK-style project format. Shared build settings and package versions live in files such as `Directory.Build.props` and `Directory.Packages.props`. Prefer updating MORYX package versions there instead of only through the NuGet Package Manager.
+
+`PencilFactory` is the shared domain project (root namespace). It holds types used across the solution, for example product types and activities.
+
+| Project | Purpose |
+| ------- | ------- |
+| `PencilFactory` | Domain model: product types, activities, parameters, later capabilities |
+| `PencilFactory.Resources` / `PencilFactory.Resources.Assembling` | Resources for the plant (cells, VisualInstructor, later drivers) |
+| `PencilFactory.App` | Starts the application and references the other projects |
+| `PencilFactory.Products`, `ControlSystem`, `Orders` | Plugins for later chapters |
+| `PencilFactory.Tests` | Unit tests |
+
+Later chapters add more resource projects the same way. `PencilFactory.App` must reference each resource project you want to see in the UI.
+
+### What you will touch in this chapter
+
+| Kind | Items |
+| ---- | ----- |
+| Projects | `PencilFactory` (`Products/`, `Activities/`), `PencilFactory.Resources.Assembling`, `PencilFactory.App` |
+| Types | `GraphitePencilType`, `PencilColor`, `GraphiteHardness`, `AssemblingCell`, `AssemblingParameters` |
+| UI | Products, Resources, Workplans, Orders, Worker Support |
+
+If a type never shows up in the Add Resource dialog, check the App project references first (see [Troubleshooting](#troubleshooting)).
+
+### Check your progress
+
+* Solution opens in Visual Studio and the app starts (dashboard visible)
+* `moryx exec post-setup` completed without errors while the app was running
+* You can name the domain project, the Assembling resource project and the App host
+
+---
+
 ## Products
 
-At first, you will model [products](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/module-products/product-definition.md).
+At first, you will model [products](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/module-products/product-definition.md).
 Products represent the articles to be manufactured. MORYX differentiates between
-`ProductType` and `ProductInstance`. The `ProductType` is what you can order
-in a catalog, while the `ProductInstance` is what you would receive after ordering:
-an instance of the product with its unique serial number. In order for a `ProductType`
-to be produced, it needs a corresponding `ProductInstance`. For further
-information on how to create a product, see [this](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/tutorials/how-to-create-a-product.md).
+`ProductType` and `ProductInstance`:
+
+| | ProductType | ProductInstance |
+| --- | --- | --- |
+| Idea | Catalog entry (what you can order) | Concrete piece in production (serial / instance) |
+| Example | Green HB graphite pencil as a type | One pencil currently on the assembling station |
+| You model | Classes under Products, properties, later PartLinks | Created by the system when an order runs |
+
+In order for a `ProductType` to be produced, it needs a corresponding `ProductInstance` at runtime.
+For further information on how to create a product, see [this tutorial](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/tutorials/how-to-create-a-product.md).
 
 Let's take a look at the composition of the pencil *Pencilla Inc.* produces.
 
 * A pencil consists of 2 wooden slats and 1 graphite in the middle.
 * The pencil has a color (green or brown).
-* Graphite can be in different degrees of hardness, in this scenario *2B*, *B* and *HB*.
+* Graphite can have different hardness grades. This training implements *B* and *HB*, *2B* is another possible grade.
 
 > **Note:** When defining the hardness of pencils, the number (degree) is put first (2B, 2H, etc.). Since this can't be represented in code, it is switched for names, while for everything else the official format is used. If you are interested, you will find more about [grading and classification here](https://en.wikipedia.org/wiki/Pencil#Grading_and_classification).
 
@@ -99,23 +165,39 @@ From the details above, the `GraphitePencilType` needs
 
 * a color property
 * a hardness property
-  
-You will find the `GraphitePencilType` among all other `<Product>Types` in the
-`PencilFactory` package within the `Products` folder.
 
-Paste the following code and for properties to be shown in the UI, add the [EntrySerialize](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/framework/Serialization/entry-convert.md#entryserialize-attribute)
-attribute. For properties to be saved in the database, use the [DataMember](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute?view=net-7.0) attribute.
+Open `GraphitePencilType` in the `PencilFactory` project under the `Products` folder
+(with the other generated `*Type` classes).
 
-``` cs
+> **Concept:** MORYX does not expose every C# property automatically. You mark members with
+> attributes (metadata). At runtime the framework reads them through reflection.
+>
+> * [`EntrySerialize`](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/framework/serialization/entry-convert.md#entryserialize-attribute):
+>   show and edit the property in the Products UI
+> * [`DataMember`](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute):
+>   store the property with the product data
+>
+> Use **both** on Color and Hardness. Missing `EntrySerialize` -> nothing to edit in the UI.
+> Missing `DataMember` -> a saved UI value may vanish after restart.
+>
+> If an attribute is underlined red, press `Ctrl + .` and add the using
+> (`Moryx.Serialization` / `System.Runtime.Serialization`).
+
+Add these properties:
+
+```cs
+[EntrySerialize]
+[DataMember]
 public PencilColor Color { get; set; }
 
+[EntrySerialize]
+[DataMember]
 public GraphiteHardness Hardness { get; set; }
 ```
 
-To make the code compile so far, you still need to implement the enums `PencilColor` and `GraphiteHardness`.
-You can do that easily by moving the cursor to the red underlined name, press
-`Ctrl + .` and select `Generate class 'PencilColor' in new file`. Then, go to
-that file, change `class` to `enum` and add the required attributes:
+`PencilColor` and `GraphiteHardness` do not exist yet. Put the cursor on the red
+name, press `Ctrl + .` and choose **Generate class 'PencilColor' in new file**.
+Open that file, change `class` to `enum` and fill in the values:
 
 ```cs
 public enum PencilColor
@@ -125,9 +207,14 @@ public enum PencilColor
 }
 ```
 
-Do the same for `GraphiteHardness`.
+Do the same for `GraphiteHardness`. Optionally add
+`[Display(Name = "...")]` (`System.ComponentModel.DataAnnotations`) on enum values.
+That only changes the **label** in the dropdown. The C# name stays `B` / `HB`
+(identifiers cannot start with a digit, so you cannot name a member `1B`).
 
 ```cs
+using System.ComponentModel.DataAnnotations;
+
 public enum GraphiteHardness
 {
     [Display(Name = "B")]
@@ -136,6 +223,8 @@ public enum GraphiteHardness
     HB = 2
 }
 ```
+
+Rebuild so the new type appears in the Products UI.
 
 ### Create Products
 
@@ -157,11 +246,11 @@ sound a bit confusing, but it lets you add new products.
   * *Name*: `GP-1B`
 * Click on **Import**.
 * Click on the product you just added: `100001-00 GP-1B`
-* Click on the edit icon at the top right to edit.
+* Click on the edit icon at the top left to edit.
 * In the `Color` dropdown choose `Green`
 * In the `Hardness` dropdown choose `B` as the hardness, which represents `1B`
   in this case.
-* Save your changes by clicking on the save icon at the top right corner.
+* Save your changes by clicking on the save icon at the top left corner.
 
 ![Edit product color and hardness](./chapter-01/product-edit-color-hardness-1.png)
 
@@ -183,10 +272,38 @@ similar to the image below.
 
 Now you should have your products `100001-00 Green Pencil GP-1B` and
 `100002-00 Brown Pencil BP-HB`.
-The next challenge is to actually let a resource produce the pencils. So far there is
-no script that describes how the pencils are produced.
-Therefore, the next step is to model a resource after which we can create a **Recipe** and a
-[Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md).
+
+### Check your progress
+
+* Products `100001` (Green / B) and `100002` (Brown / HB) exist and show Color and Hardness after save
+* After an app restart, those property values are still there
+
+### Quick experiment: EntrySerialize vs DataMember
+
+You already know from the Concept box what each attribute is for. Now prove it.
+
+Important: you edit attributes on `GraphitePencilType`. That change applies to **every**
+product of this type (including `100001` / `100002`).
+
+**First, guess:**
+
+* If only `DataMember` is missing: can you still edit Color in the UI? Will a new value survive a restart?
+* If only `EntrySerialize` is missing: will Color still appear in the product editor?
+
+**Then run** (observe on any GraphitePencil product, for example `100001`):
+
+1. Both attributes present -> set Color, save, restart -> value still there.
+2. Remove only `[EntrySerialize]` on `Color` -> rebuild, restart -> open the product. Is Color still editable? Put the attribute back, rebuild, restart.
+3. Remove only `[DataMember]` on `Color` -> rebuild, restart -> change Color, save, restart again. Is the new value still there? Put the attribute back, rebuild, restart and set Color back to the intended training values (Green on `100001`, Brown on `100002`).
+
+<details>
+<summary>Expected outcome</summary>
+
+Without `EntrySerialize`, Color disappears from the editor (or is not editable) for all GraphitePencil products. Without `DataMember`, you may still edit Color, but the change does not stick after restart. That is why Color and Hardness keep both attributes for the rest of the training.
+
+</details>
+
+Next you model a resource so a Recipe and [Workplan](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/abstractions/processing/workplans.md) can actually produce pencils.
 
 ## Resources
 
@@ -222,7 +339,7 @@ already has an instructor.
 
 ``` cs
 [ResourceReference(ResourceRelationType.Extension)]
-public IVisualInstructor VisualInstructor { get; set; }
+public IVisualInstructor VisualInstructor { get, set, }
 ```
 
 `IVisualInstructor`
@@ -253,10 +370,15 @@ button and selecting the required cell.
 In the following dialog it is ok to go with just the typename as the cell
 identifier.
 
-If you then select the *AssemblingCell* and click the edit button, you can assign
+If you select the *AssemblingCell* and click the edit button, you can assign
 the previously created *VisualInstructor* to its *Instructor* property.
 
 ![Create resources](./chapter-01/assign-instructor.png)
+
+### Check your progress
+
+* AssemblingCell and VisualInstructor exist at root level in Resources
+* AssemblingCell's VisualInstructor reference points to the VisualInstructor
 
 ### Sessions
 
@@ -267,7 +389,7 @@ using Moryx.VisualInstructions;
 ```
 
 Cell and Instructor are now connected, but they do not interact with each other.
-Therefor, you need to implement the cells session handling. But before you do,
+Therefore, you need to implement the cell's session handling. But before you do,
 you will get a short introduction about how this works in theory and the
 vocabulary that is used within MORYX.
 
@@ -294,6 +416,9 @@ another *sequence* or start a whole new *session* by signaling `ReadyToWork`.
 ![Activities, Sequences and Sessions](./chapter-01/SessionsAndSequences.png)
 
 Now, you will convert theory into practice and begin with starting a *session*.
+
+**Subgoal: Signal ready to work**
+
 To do so, update the `ProcessEngineAttached()` method to the following: 
 
 ```cs
@@ -318,6 +443,8 @@ thus signal `ReadyToWork` to the ProcessEngine.
 * `ActivityClassification.Production` is used to notify that the cell is ready to
  work on an `Activity` of type `production`.
 
+**Subgoal: Start the activity (show instruction)**
+
 Since that should result in an `StartActivity()` call, the next thing to
 do will be to implement this function. Find the comment
 `/* Start execution here */` and replace it so that the whole function looks
@@ -341,6 +468,8 @@ now, which is provided as a delegate to `VisualInstructor.Execute`. That means, 
 have to implement `InstructionCompleted()`, that gets called, when an instruction
 has finished, i.e.: When a worker has finished its task.
 
+**Subgoal: Complete the activity and re-offer ReadyToWork**
+
 ```cs
 private void InstructionCompleted(int instructionResult, ActivityStart activity)
 {
@@ -351,7 +480,7 @@ private void InstructionCompleted(int instructionResult, ActivityStart activity)
 }
 ```
 
-These previous lines will pubish an `ActivityCompleted` result to the ProcessEngine. 
+These previous lines will publish an `ActivityCompleted` result to the ProcessEngine. 
 
 And finally, the method that gets called on a cell after completing work is
 `SequenceCompleted()`. In here you start a *ReadyToWork* session again, using
@@ -374,7 +503,7 @@ public override void SequenceCompleted(SequenceCompleted completed)
 
 In order to produce pencils, you have to establish the connection between cells
 and products: MORYX needs to know, how a product flows through the production
-line. This is not done in the code, but modelled within [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md).
+line. This is not done in the code, but modelled within [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/abstractions/processing/workplans.md).
 
 This allows you to define in a rather abstract way, *what* needs to be done without
 going much more into details. MORYX will find the way later, *how* this is done
@@ -444,13 +573,18 @@ your created workplan `Workplan`.
 
 ![Select recipe classification](./chapter-01/recipe-add-3.png)
 
-* Repeat the same steps for the second product `100002-00 Green Pencil GP-HB`.
+* Repeat the same steps for the second product `100002-00 Brown Pencil BP-HB`.
+
+### Check your progress
+
+* Workplan contains an Assembling Task with instruction text and connected inputs/outputs
+* Both products have a Default `PencilRecipe` pointing at that workplan
 
 ### Start production
 
 To create a new `Order`. Navigate to the *Orders* UI.
 
-* Click on the add button at the bottom right.
+* Click on the add button at the top right.
 
 ![Orders](./chapter-01/order-create-1.png)
 
@@ -493,10 +627,50 @@ You can manually select it by clicking on the Settings icon at the top right.
 
 Use the `SUCCESS` and `FAILED` action to make the products flow through the production line
 
+### Check your progress
+
+* Order `000001` is running (or completed) after BEGIN
+* Worker Support shows the Assembling instruction. SUCCESS / FAILED advances the product
+
+## Checklist
+
+* [ ] `PencilFactory` created with the CLI and running
+* [ ] Products `100001` (Green) and `100002` (Brown) created
+* [ ] AssemblingCell linked to VisualInstructor
+* [ ] Workplan, recipe and first order completed in Worker Support
+
+## Summary
+
+You have a running host, persistent product data, a manual cell and a recipe/workplan that can start an operation. Product classes describe the article. Session methods implement the cell's interaction with the Process Engine. The UI connects the objects.
+
+## Reflect
+
+1. What can happen when a property has EntrySerialize but no DataMember? What changes when the attributes are reversed?
+2. Why does SequenceCompleted offer ReadyToWork again?
+3. Which requirement belongs in workplan configuration and which requires cell code?
+
+## Practice
+
+Create a separate test product `100099`, revision `0`, using the existing `GraphitePencilType`. Create a second workplan with an Assembling task and a different instruction text. Give the test product a Default recipe that points to that workplan. Run one piece in Orders / Worker Support.
+
+**Acceptance checks:** the test product shows the new instruction. `100001` and `100002` still use the original recipe/workplan. You did not change AssemblingCell code.
+
+Keep `100099` if you want. Later chapters rely on `100001` and `100002`.
+
+## Check your reasoning
+
+<details>
+<summary>Compare your answers after attempting the questions and practice</summary>
+
+1. With EntrySerialize but no DataMember, Color can appear in the Products UI, but a new value may be gone after restart. With DataMember but no EntrySerialize, the value can still be stored, but you cannot edit that field in the UI.
+2. ProcessEngineAttached offers readiness at the start. After a finished sequence, SequenceCompleted must offer ReadyToWork again so the next piece can start.
+3. Instruction text belongs in the workplan task. Cell code handles ActivityStart, worker completion and ReadyToWork. A second instruction therefore needs a new workplan (and recipe), not a changed AssemblingCell.
+
+</details>
+
 ## Troubleshooting
 
-Here you will find a list of common problems, that might occur, and how to fix
-them.
+Common problems in this chapter:
 
 ### Encountering database issues after setup section
 
@@ -508,7 +682,7 @@ If you encounter issues when opening Products or Resources for the first time at
 consider checking the databases in the command center.
 There you may have to create the missing databases.
 
-If the issue occurs during the APD at a later stage due to messing up the order of steps or making changes to classes, of existing entries, you may also need to delete the DB.
+If the issue occurs during the ADP at a later stage due to messing up the order of steps or making changes to classes, of existing entries, you may also need to delete the DB.
 
 #### Step 1: Open the Command Center
 
@@ -522,18 +696,19 @@ If the issue occurs during the APD at a later stage due to messing up the order 
 
 ![3. Reincarnate the failed services](./chapter-01/commandCenterModules.png)
 
+### Orders blocked / production does not start
+
+If BEGIN does nothing useful, check in order: recipe Classification is `Default`,
+workplan inputs/outputs are connected, AssemblingCell has a VisualInstructor
+and the cell session methods publish `ReadyToWork` / `ActivityCompleted` as above.
+Also confirm Worker Support is showing the VisualInstructor display.
+
 ### I cannot find a resource in the add dialog
 
 If you cannot find an expected resource in the Add Resource dialog, the corresponding assembly is usually not referenced.
 MORYX uses reflection to find public classes that inherit from `Resource`, but only in assemblies loaded into the AppDomain (here `PencilFactory.App`).
-To fix the problem, you should add any missing project or package references and then check again if the resource you expected is now found.
+To fix the problem, add any missing project or package references and check the dialog again.
 
-## Checklist
-
-* [ ] `PencilFactory` created with the CLI and running
-* [ ] Products `100001` (Green) and `100002` (Brown) created
-* [ ] AssemblingCell linked to VisualInstructor
-* [ ] Workplan, recipe, and first order completed in Worker Support
+See also [Troubleshooting](troubleshooting.md) and [Help](README.md#help).
 
 > [Table of contents](README.md) | [Next](chapter-02-drivers.md)
-

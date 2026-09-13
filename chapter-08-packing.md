@@ -1,20 +1,76 @@
 # Chapter 8 - Packing
 
-The retail pack exists as master data, but nobody packs it yet. *Pencilla Inc.* needs a packing station where the worker sees how many pencils go into which carton. You build that cell and let `Populate` read the PartLinks at runtime.
+The retail pack is defined, but nobody packs it yet. *Pencilla Inc.* needs a packing station where the worker sees how many pencils go into which carton. You build that cell and let `Populate` read the PartLinks at runtime.
 
-Packing is a manual cell like Assembling. The difference is in `Populate`: parameters come from the Retail Pack, not from fixed workplan texts.
-
-See also [Cells](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/control-system/cell-resource.md),
-[Activities](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/activities.md)
-and [Workplans](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/dev/docs/articles/abstractions/processing/workplans.md).
+Packing is a manual cell like Assembling. The difference is in `Populate`: parameters come from the Retail Pack's PartLinks, not from fixed workplan texts.
 
 > [Table of contents](README.md) | [Previous](chapter-07-partlinks.md) | [Next](chapter-09-initializer-importer.md)
 
-## Parameters: read PartLinks at runtime
+**On this page:** [Goals](#learning-goals) | [Starting point](#before-you-start) | [Practice](#practice) | [Check your reasoning](#check-your-reasoning) | [Troubleshooting](#troubleshooting)
+
+## Learning goals
+
+By the end of this chapter, you should be able to:
+
+* Implement `PackingParameters.Populate` so the instruction shows Quantity, pencil and carton from PartLinks
+* Mirror Assembling's manual cell for `PackingCell` and add a Retail Pack workplan
+* Prove ParameterBinding by running a **second** pack product without changing `Populate`
+
+## Where you are in the journey
+
+* Chapter 7: PartLinks / bill of materials
+* **This chapter**: Packing cell (`Populate` + manual cell)
+* Chapters 9+: seed, modules, selectors, polish
+
+## Before you start
+
+From chapter 7 you should already have:
+
+* Two pack products in Products, each with PartLinks (pencils + carton)
+* Packing step added (`moryx add step Packing`) and `PackingCapabilities` without `Value`
+
+This chapter: write `Populate`, build `PackingCell` like Assembling, add workplan and recipe, then test orders.
+
+## What you will touch
+
+| Kind | Items |
+| ---- | ----- |
+| Projects / files | `PackingStep/*`, `PencilFactory.Resources.Packing` |
+| Classes / types | `PackingParameters`, `PackingActivity`, `PackingCell` |
+| UI | Resources (PackingCell + VisualInstructor), Workplans, Products (recipe), Orders, Worker Support |
+
+For new files, let Visual Studio add missing usings (`Ctrl + .`).
+
+## Populate from PartLinks
+
+In this chapter the only worked example is `Populate`. The PackingCell session lifecycle is your transfer from Assembling (chapter 1).
+
+> **Concept:** Fixed workplan instruction text (chapter 1) is enough when every product
+> gets the same sentence. Retail packs differ by Quantity and linked products, so
+> `Populate` reads the current product's PartLinks at runtime.
+
+
 
 File: `src/PencilFactory/Activities/PackingStep/PackingParameters.cs`
 
-Replace the empty `Populate` from the CLI. Here the bill of materials is read from the current product (Retail Pack); Quantity, pencil name, and carton end up in the Instruction.
+The first two fragments explain parts of the method. The full class in subgoal 3 is the replacement: merge it into the generated file once, retaining its namespace/usings. Do not paste the preview fragments in addition to the full method.
+
+**Subgoal 1: Cast to the pack product type**
+
+```csharp
+var parameters = (PackingParameters)instance;
+var productionProcess = (ProductionProcess)process;
+var pack = (PencilPackType)productionProcess.ProductInstance.Type;
+```
+
+**Subgoal 2: Read PartLinks**
+
+```csharp
+var pencilLink = pack.GraphitePencil;
+var cartonLink = pack.Carton;
+```
+
+**Subgoal 3: Fill parameters and build the worker instruction**
 
 ```csharp
 public class PackingParameters : VisualInstructionParameters
@@ -55,9 +111,9 @@ public class PackingParameters : VisualInstructionParameters
 }
 ```
 
-What happens? When the activity starts, `ProductInstance.Type` is the Retail Pack from the order. `GraphitePencil` / `Carton` are the PartLinks.
+When the activity starts, `ProductInstance.Type` is the Retail Pack from the order. `GraphitePencil` / `Carton` are the PartLinks.
 
-> **Note:** If you cast to `GraphitePencilType` instead of `PencilPackType` here, it will fail at runtime; the Packing order must be for the Retail Pack.
+> **Note:** If you cast to `GraphitePencilType` instead of `PencilPackType` here, it will fail at runtime. The Packing order must be for the Retail Pack.
 
 ## Activity: Capabilities without Value
 
@@ -69,26 +125,40 @@ public override ICapabilities RequiredCapabilities => new PackingCapabilities();
 
 (Do not set `Value`.)
 
-## Cell: Visual Instructor like Assembling
+## Your task: PackingCell (mirror Assembling)
 
 File: `src/PencilFactory.Resources.Packing/PackingCell.cs`
 
-The CLI cell often already has `IVisualInstructor` and `StartActivity`. Make sure:
+Open `AssemblingCell` as a reference. Implement Packing as a **manual** cell:
 
-1. `[ResourceReference(ResourceRelationType.Extension)] public IVisualInstructor VisualInstructor { get; set; }`
-2. In `OnInitializeAsync`: `Capabilities = new PackingCapabilities();`
-3. `ProcessEngineAttached`: Production + Push (like Assembling)
+1. `IVisualInstructor` via `[ResourceReference(ResourceRelationType.Extension)]`
+2. `OnInitializeAsync`: `Capabilities = new PackingCapabilities();`
+3. `ProcessEngineAttached`: Production + `ReadyToWorkType.Push`
+4. `StartActivity`: for `PackingActivity`, call `VisualInstructor.Execute(..., InstructionCompleted)`
+5. `InstructionCompleted`: `CreateResult` + `PublishActivityCompleted`
+6. `SequenceCompleted`: new ReadyToWork (Push)
+
+No driver is needed (the worker clicks SUCCESS). Rename Assembling types to Packing types. Do not leave Assembling activity names in the Packing project.
+
+### Check your progress
+
+* PackingCell compiles and uses `PackingActivity` / `PackingCapabilities`
+* You can name the Assembling methods you mirrored
+
+## Reference for PackingCell (only if stuck)
+
+<details>
+<summary>Open the manual-cell reference after trying the task</summary>
+
+
+Prefer mirroring `AssemblingCell`. If you are blocked, these are the usual pieces:
 
 ```csharp
 protected override IEnumerable<Session> ProcessEngineAttached()
 {
     yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
 }
-```
 
-4. In `StartActivity` for `PackingActivity`:
-
-```csharp
 public override void StartActivity(ActivityStart activityStart)
 {
     _currentSession = activityStart;
@@ -99,36 +169,28 @@ public override void StartActivity(ActivityStart activityStart)
             break;
     }
 }
-```
 
-5. `InstructionCompleted`
-
-```csharp
 private void InstructionCompleted(int instructionResult, ActivityStart activity)
-    {
-        _currentInstruction = 0;
-        var result = activity.CreateResult(instructionResult);
-        _currentSession = result;
-        PublishActivityCompleted(result);
-    }
+{
+    _currentInstruction = 0;
+    var result = activity.CreateResult(instructionResult);
+    _currentSession = result;
+    PublishActivityCompleted(result);
+}
+
+public override void SequenceCompleted(SequenceCompleted completed)
+{
+    _currentSession = completed;
+
+    var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
+    PublishReadyToWork(rtw);
+    _currentSession = rtw;
+}
 ```
 
-6. `SequenceCompleted`
+Also set `Capabilities = new PackingCapabilities();` on initialize and link `IVisualInstructor` like Assembling.
 
-```csharp
-    public override void SequenceCompleted(SequenceCompleted completed)
-    {
-        _currentSession = completed;
-
-        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
-        PublishReadyToWork(rtw);
-        _currentSession = rtw;
-    }
-```
-
-A driver is not needed for this learning step (the worker clicks SUCCESS).
-
-7. Start the app
+</details>
 
 ## Create the resource in the UI
 
@@ -168,22 +230,75 @@ Without a Default recipe the order will not start.
 
 1. Worker Support / Display = VisualInstructor
 2. Orders: product Retail Pack, quantity 1, CREATE, BEGIN
-3. Worker assistance Instruction must show Quantity, pencil name, and carton from the PartLinks
+3. Worker assistance Instruction must show Quantity, pencil name and carton from the PartLinks
 4. SUCCESS, order finished
 
-Optional beforehand: order GraphitePencil quantity 20 (pencil line). Not technically required for Packing; the instruction simulates placing pencils into the carton.
+Optional beforehand: order GraphitePencil quantity 20 (pencil line). Not technically required for Packing. The instruction simulates placing pencils into the carton.
 
 ![Retail Pack production order in Orders UI](./chapter-08/retail-pack-order.png)
 
-![Packing worker instruction with quantity, pencil, and carton](./chapter-08/packing-instruction.png)
+![Packing worker instruction with quantity, pencil and carton](./chapter-08/packing-instruction.png)
+
+### Check your progress
+
+* Retail Pack order BEGIN: Worker Support instruction shows Quantity, pencil name and carton from PartLinks
+* SUCCESS completes the order. Recipe Classification is Default on the Retail Pack
+* Pencil-line workplan is unchanged (Assembling/Colorizing/Testing still for GraphitePencil products)
 
 ## Checklist
 
 * [ ] `PackingParameters.Populate` reads PartLinks and builds the Instruction
 * [ ] `PackingActivity` with `PackingCapabilities()` without Value
-* [ ] PackingCell with VisualInstructor, Production session, StartActivity / SequenceCompleted
+* [ ] PackingCell mirrored from Assembling (manual instructor session)
 * [ ] PackingCell created in the UI and Instructor linked
 * [ ] Retail Pack Workplan + Default recipe on the Retail Pack
 * [ ] Order Retail Pack quantity 1: Instruction shows Quantity / pencil / carton
+
+## Summary
+
+Packing reuses the manual-cell lifecycle. `Populate` turns the ordered pack's PartLinks into a worker instruction, so several packs can share one implementation and workplan. Pencil production and packing stay separate orders.
+
+## Reflect
+
+1. What is reused from Assembling and what is new in PackingParameters?
+2. Why does a Retail Pack use a different workplan from a GraphitePencil?
+3. How would you tell a wrong PartLink quantity from ordering the wrong product?
+
+## Practice
+
+1. Give the **second** pack from chapter 7 a Default recipe on the **same** Retail Pack workplan (no C# changes). Predict the Worker Support instruction, then run an order and check Quantity / pencil / carton.
+
+2. Customer request: "Change this pack from ten to twelve pencils, but keep the same packing process." Change only the Quantity in Products, predict the new instruction, run one order, then restore the original Quantity.
+
+<details>
+<summary>Hint</summary>
+
+Check the product on the order, its GraphitePencil PartLink and Quantity and the Default recipe. You should not edit `PackingParameters.cs`.
+
+</details>
+
+## Check your reasoning
+
+<details>
+<summary>Compare your answers after attempting the questions and practice</summary>
+
+1. ReadyToWork, StartActivity, instruction callback and SequenceCompleted follow Assembling. Populate builds the instruction from the pack's PartLinks.
+2. The pack needs a Packing step. The pencil workplan runs Assembling/Colorizing/Testing for GraphitePencil. A different process needs a different workplan.
+3. Check which product the order uses first, then that product's PartLinks.
+
+**Practice feedback:** The second pack's instruction must match its PartLinks. Changing Quantity to 12 updates the text without changing code. Restore afterward.
+
+</details>
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| --- | --- |
+| Instruction shows "(no ... linked)" or 0 | PartLinks / Quantity missing on the Retail Pack product |
+| Order will not start | No Default recipe on the Retail Pack, wrong workplan |
+| Packing never offered | PackingCell / VisualInstructor missing, capabilities mismatch |
+| Wrong workplan steps appear | Recipe still points at pencil Workplan |
+
+See also [Troubleshooting](troubleshooting.md) and [Help](README.md#help).
 
 > [Table of contents](README.md) | [Previous](chapter-07-partlinks.md) | [Next](chapter-09-initializer-importer.md)

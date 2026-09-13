@@ -2,7 +2,7 @@
 
 In this program, you will build a MORYX application from scratch. You will go through the typical process of an application developer and learn about MORYX concepts and terminology on the way.
 
-You will accompany a pencil manufacturer on its road to the digital factory. Despite using some specialized machines, they don't have any automated processes right now.
+You will accompany a pencil manufacturer on its road to the digital factory. They already use specialized machines, but none of their production steps are automated yet.
 
 ## Who this tour is for
 
@@ -10,7 +10,7 @@ This tour addresses application developers that have a basic understanding of so
 
 ## Prerequisite
 
-Below is a list of patterns and basic concepts that MORYX is built upon, but you don't need to know them right upfront.
+Below is a list of patterns and basic concepts that MORYX is built upon, but you don't need to know them all upfront. When a chapter relies on one of them, it points it out in context.
 
 ### General/OOP
 
@@ -18,8 +18,6 @@ Below is a list of patterns and basic concepts that MORYX is built upon, but you
 * [SOLID Principles](https://www.c-sharpcorner.com/UploadFile/damubetha/solid-principles-in-C-Sharp)
 
 ### C#/.NET
-
-This is a list of more or less 'advanced' topics
 
 * [C# Reflection](https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/reflection-and-attributes/)
 
@@ -39,6 +37,23 @@ Before you start, you need the following tools installed on your machine:
 * [ ] [Git](https://git-scm.com/)
 * [ ] [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/)
 * [ ] [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+
+## How to work through the training
+
+You do not need any prior MORYX experience. Install the tools under [Requirements](#requirements), then work through the [chapters](#chapters) from **1 to 12 in order** on the **same** application. Start with [Chapter 1](chapter-01-basics.md). The chapter list is your roadmap: each entry continues the pencil-factory story.
+
+In every chapter:
+
+1. Read the learning goals, then work one section at a time.
+2. Treat code blocks as **additions or changes** to the file you already have, unless the chapter says to replace the whole file.
+3. Stop at each **Check your progress** and only continue when it matches what you see.
+4. Try **Practice** yourself before opening hints or reference answers. Use **Check your reasoning** after your own attempt.
+
+Early chapters show full examples. Later chapters reuse those patterns and leave more decisions to you.
+
+This tour is meant to be completed on its own. The [MORYX Framework docs](https://github.com/PHOENIXCONTACT/MORYX-Framework/tree/main/docs) are optional background for API detail later.
+
+If you are stuck: use the Troubleshooting section at the end of the chapter first. For a short definition, open the [Glossary](glossary.md). For issues that appear in more than one chapter, open [Troubleshooting](troubleshooting.md).
 
 ## Chapters
 
@@ -139,7 +154,7 @@ Clicking everything together in the UI worked for learning, but every new machin
 You will learn to:
 
 * Seed resources with a ResourceInitializer
-* Import products, workplans, and recipes with a ProductImporter
+* Import products, workplans and recipes with a ProductImporter
 * Show the line in the Factory Monitor
 
 Concepts: ResourceInitializer, ProductImporter, Factory Monitor
@@ -180,4 +195,15 @@ Concepts: Assignments, Localization, Notifications, States
 
 ## Help
 
-If you need help, you can ask and find MORYX related questions on Stack Overflow using the tag [moryx](https://stackoverflow.com/questions/tagged/moryx), or you can open issues on GitHub.
+If something breaks, stay in the chapter first. The progress checks and the
+Troubleshooting section at the end usually catch the common cases.
+
+If the same problem shows up again later, use [Troubleshooting](troubleshooting.md).
+For a short definition, use the [Glossary](glossary.md). If you just need the next
+task, open the next chapter in the [list above](#chapters).
+
+You can ask and find MORYX-related questions on Stack Overflow using the tag
+[moryx](https://stackoverflow.com/questions/tagged/moryx). You can also open an
+issue on the [Application Developer Training](https://github.com/PHOENIXCONTACT/Application-Developer-Training/issues)
+or [MORYX Framework](https://github.com/PHOENIXCONTACT/MORYX-Framework/issues)
+repository.

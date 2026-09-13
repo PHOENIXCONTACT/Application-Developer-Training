@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant PE as Process Engine
+    participant Cell as TestingCell
+    participant Driver as SimulatedTestingDriver
+    participant Sim as MachineSimulator
+
+    Sim->>Driver: Ready(activity)
+    Driver->>Cell: Ready = true (InputChanged)
+    Cell->>PE: Pull ReadyToWork
+    PE->>Cell: TestingActivity (StartActivity)
+    Cell->>Driver: ProcessStart = true
+    Note over Driver: Ready = false, State = Executing
+    Sim->>Driver: Result after execution time
+    Driver->>Cell: ProcessResult (InputChanged)
+    Cell->>Driver: ProcessStart = false
+    Cell->>PE: ActivityCompleted

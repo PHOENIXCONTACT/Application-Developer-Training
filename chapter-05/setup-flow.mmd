@@ -1,0 +1,12 @@
+flowchart TD
+    A["Order starts<br/>product color e.g. Brown"] --> B["ProvideColorTrigger.Evaluate<br/>reads product color"]
+    B --> C{"Does ColorizingCell<br/>already provide that color?"}
+    C -->|"No, still Green"| D["Create setup job<br/>ColorChangeTask<br/>with Parameters.Color"]
+    C -->|"Yes, already Brown"| H["Skip setup"]
+    D --> E["ColorChangeActivity<br/>on ColorizingCell<br/>Worker Support"]
+    E --> F{"Worker result?"}
+    F -->|Success| I["Update Cell.Color<br/>from Parameters.Color<br/>capabilities refreshed"]
+    F -->|Failed| J["Cell color unchanged"]
+    I --> K["Run production workplan<br/>Assembling, Colorizing, Testing"]
+    H --> K
+    J --> L["Production may stall<br/>Colorizing still needs<br/>a matching color"]
