@@ -35,8 +35,10 @@ Below is a list of patterns and basic concepts that MORYX is built upon, but you
 Before you start, you need the following tools installed on your machine:
 
 * [ ] [Git](https://git-scm.com/)
-* [ ] [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/)
 * [ ] [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+* [ ] A C# editor of your choice: [Visual Studio](https://visualstudio.microsoft.com/downloads/) is convenient, but **not required**. VS Code, Rider or any editor plus the terminal is enough.
+
+Chapters often mention Visual Studio (`F5`, Quick Actions). The same steps work elsewhere: edit the files, then build/run with `dotnet` (see [Chapter 1: Setup](chapter-01-basics.md#setup)).
 
 ## How to work through the training
 

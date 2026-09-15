@@ -79,9 +79,20 @@ moryx new PencilFactory --steps Assembling --products GraphitePencil
 This should not only leave you with a solution `PencilFactory.sln` inside
 the new folder `PencilFactory`, it also does some initial configuration.
 
-That means, you can directly open it in Visual Studio and dig into it.
+That means you can open `PencilFactory.sln` in Visual Studio **or** open the folder in any editor (VS Code, Rider, …) and work from the terminal.
 
-Run the application (press `F5`).
+**Start the application** (pick one):
+
+* **Visual Studio:** open the solution, set `PencilFactory.App` as startup project if needed, press `F5`.
+* **Any editor / terminal:** from the solution root (`PencilFactory`, the folder that contains the `.sln`):
+
+```bash
+dotnet run --project src/PencilFactory.App
+```
+
+Or `cd` into `src/PencilFactory.App` and run `dotnet run`.
+
+Open the URL shown in the console (usually `https://localhost:5000`). Later chapters use the same start command whenever they say “start the app” or “press F5”.
 
 > **Note:** Starting it for the first time will restore NuGet packages. That can take a few minutes.
 
@@ -101,7 +112,7 @@ moryx exec post-setup
 
 ## Project structure
 
-After `moryx new`, open `PencilFactory.sln` in Visual Studio. The solution contains several projects. Almost every chapter only changes a few of them.
+After `moryx new`, open `PencilFactory.sln` (or the folder) in your editor. The solution contains several projects. Almost every chapter only changes a few of them.
 
 ![Solution Explorer](./chapter-01/solution-explorer.png)
 
@@ -131,7 +142,7 @@ If a type never shows up in the Add Resource dialog, check the App project refer
 
 ### Check your progress
 
-* Solution opens in Visual Studio and the app starts (dashboard visible)
+* Solution/folder opens in your editor and the app starts (dashboard visible)
 * `moryx exec post-setup` completed without errors while the app was running
 * You can name the domain project, the Assembling resource project and the App host
 

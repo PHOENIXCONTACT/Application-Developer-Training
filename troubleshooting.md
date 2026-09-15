@@ -8,7 +8,7 @@ Cross-chapter quick reference for common MORYX ADP pitfalls. Prefer the chapter-
 
 **Problem:** `moryx add step` / `moryx add module` creates files in the wrong place or fails to find the solution.
 
-**Check:** Your shell's current directory. It must be the **PencilFactory solution root** (the folder that contains the `.sln`), the same folder Visual Studio opened.
+**Check:** Your shell's current directory. It must be the **PencilFactory solution root** (the folder that contains the `.sln`), the same root you open in Visual Studio or another editor.
 
 **Fix:** `cd` into that solution root, then run `moryx add ...` again. (`moryx new` is only for the first create. `moryx exec post-setup` talks to the running app over HTTP and does not depend on which folder you are in.)
 
