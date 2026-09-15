@@ -32,11 +32,30 @@ Below is a list of patterns and basic concepts that MORYX is built upon, but you
 
 ## Requirements
 
-Before you start, you need the following tools installed on your machine:
+Install **everything** in this list.  
+
+**Simplest path:** install **both** the [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) **and** the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).  
+A .NET 10 SDK alone is often **not** enough: the training app targets **.NET 10**, but the MORYX CLI is a **.NET 8** tool. Installing the .NET 8 SDK is the easiest way to get the needed .NET 8 runtimes in one step.
 
 * [ ] [Git](https://git-scm.com/)
 * [ ] [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-* [ ] A C# editor of your choice: [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/) is convenient, but **not required**. VS Code, Rider or any editor plus the terminal is enough.
+* [ ] [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)  (Alternative: only the .NET 8 **Runtime** + ASP.NET Core 8 **Runtime** from the same page, if you prefer not to install another SDK)
+* [ ] A C# editor: [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/) is convenient, but **not required**. VS Code, Rider or any editor + terminal is enough
+
+**After installing .NET, trust the HTTPS development certificate** (Visual Studio often prompts for this, the terminal doesn't):
+
+```bash
+dotnet dev-certs https --trust
+```
+
+**Quick check:**
+
+```bash
+dotnet --list-sdks
+dotnet --list-runtimes
+```
+
+You should see **8.x** and **10.x** SDKs (each SDK already includes the matching runtimes).
 
 Chapters often mention Visual Studio (`F5`, Quick Actions). The same steps work elsewhere: edit the files, then build/run with `dotnet` (see [Chapter 1: Setup](chapter-01-basics.md#setup)).
 
