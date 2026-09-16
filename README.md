@@ -38,7 +38,7 @@ A .NET 10 SDK alone is often **not** enough: the training app targets **.NET 10*
 * [ ] [Git](https://git-scm.com/)
 * [ ] [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 * [ ] [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)  (Alternative: only the .NET 8 **Runtime** + ASP.NET Core 8 **Runtime** from the same page, if you prefer not to install another SDK)
-* [ ] A C# editor: [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/) is convenient, but **not required**. VS Code, Rider or any editor + terminal is enough
+* [ ] A C# editor: [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/) is convenient, but **not required**. VS Code, Rider or any editor + terminal works. Without a full IDE, C# extensions for IntelliSense / Quick Actions are **strongly recommended** (e.g. VS Code: [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)).
 
 **After installing .NET, trust the HTTPS development certificate** (Visual Studio often prompts for this, the terminal doesn't):
 

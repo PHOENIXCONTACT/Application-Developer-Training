@@ -14,13 +14,21 @@ Cross-chapter quick reference for common MORYX ADP pitfalls. Prefer the chapter-
 
 ## Missing usings / types do not compile
 
-**Problem:** A type or attribute is red, or the build cannot find it.
+**Problem:** A type, attribute, or method is underlined red / the build cannot find it.
 
 **Check:** Missing `using`. Leftover CLI namespaces after `moryx add` (`MyApplication`, `Some`, ...). Missing project or package reference.
 
-**Fix:** On the red name, use Visual Studio Quick Actions (`Ctrl + .`) and add the using it offers. If nothing useful appears, the project usually does not reference the assembly yet: add the ProjectReference or NuGet package the chapter just introduced, then rebuild.
+**Fix:** Open **Quick Actions** on the red mark (`Ctrl + .`) and add the offered `using`. Chapters don't list every namespace. That help comes from C# language support (IDE or [editor extensions](README.md#requirements)), not from a bare editor.
 
-## NuGet restore fails (NU1301 / MyGet / proxy 407): `dotnet run` fails, Visual Studio works
+Examples (same idea in every chapter):
+
+![Quick Actions: `using Moryx.Serialization;` for EntrySerialize](chapter-01/quick-actions-using.png)
+
+![Quick Actions: `using Moryx.ControlSystem.VisualInstructions;` for VisualInstructor.Execute](chapter-01/quick-actions-visual-instructions.png)
+
+If nothing useful appears, add the ProjectReference or NuGet package from the chapter, then rebuild.
+
+## NuGet restore fails (NU1301 / MyGet / proxy 407): `dotnet run` fails
 
 **Problem:** `dotnet run` (which also restores packages) fails on MyGet (`moryx-oss-ci`) with **NU1301** / proxy **407**. Visual Studio may still work (system proxy / package cache).
 

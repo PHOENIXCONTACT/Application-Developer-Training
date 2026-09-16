@@ -43,6 +43,8 @@ Later chapters extend that same line. Each chapter states what is new.
 
 Start from an empty training folder after you installed the tools from the README. This chapter creates the application from scratch. Later chapters continue on the same solution.
 
+When you paste code, red underlines are often a missing `using`, use Quick Actions (`Ctrl + .`). Details and examples: [Missing usings](troubleshooting.md#missing-usings--types-do-not-compile).
+
 ## Setup
 
 To setup a new project, you need the *MORYX CLI* installed. If you have installed
@@ -140,8 +142,6 @@ Later chapters add more resource projects the same way. `PencilFactory.App` must
 | Types | `GraphitePencilType`, `PencilColor`, `GraphiteHardness`, `AssemblingCell`, `AssemblingParameters` |
 | UI | Products, Resources, Workplans, Orders, Worker Support |
 
-If a type never shows up in the Add Resource dialog, check the App project references first (see [Troubleshooting](#troubleshooting)).
-
 ### Check your progress
 
 * Solution/folder opens in your editor and the app starts (dashboard visible)
@@ -193,8 +193,7 @@ Open `GraphitePencilType` in the `PencilFactory` project under the `Products` fo
 > Use **both** on Color and Hardness. Missing `EntrySerialize` -> nothing to edit in the UI.
 > Missing `DataMember` -> a saved UI value may vanish after restart.
 >
-> If an attribute is underlined red, press `Ctrl + .` and add the using
-> (`Moryx.Serialization` / `System.Runtime.Serialization`).
+> If something is underlined red, use Quick Actions (`Ctrl + .`) to add the `using` (e.g. `Moryx.Serialization` for `EntrySerialize`). More examples: [Missing usings](troubleshooting.md#missing-usings--types-do-not-compile).
 
 Add these properties:
 
