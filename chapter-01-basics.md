@@ -92,9 +92,9 @@ dotnet run --project src/PencilFactory.App
 
 Or `cd` into `src/PencilFactory.App` and run `dotnet run`.
 
-Open the URL shown in the console (usually `https://localhost:5000`). Later chapters use the same start command whenever they say “start the app” or “press F5”.
+> **Note:** The first start restores NuGet packages automatically (`dotnet run` / F5) and can take a few minutes. If restore fails (**NU1301** / proxy **407**), see [NuGet restore / proxy (MyGet)](#nuget-restore--proxy-myget).
 
-> **Note:** Starting it for the first time will restore NuGet packages. That can take a few minutes.
+Open the URL shown in the console (usually `https://localhost:5000`). Later chapters use the same start command whenever they say “start the app” or “press F5”.
 
 ![Application dashboard](./chapter-01/Home.png)
 
@@ -109,6 +109,8 @@ option.
 ```bash
 moryx exec post-setup
 ```
+
+If Products/Resources fail or modules look broken afterwards, jump to [Encountering database issues after setup](#encountering-database-issues-after-setup-section).
 
 ## Project structure
 
@@ -682,6 +684,14 @@ Keep `100099` if you want. Later chapters rely on `100001` and `100002`.
 ## Troubleshooting
 
 Common problems in this chapter:
+
+### NuGet restore / proxy (MyGet)
+
+**Problem:** `dotnet run` fails while restoring with **NU1301** on MyGet / proxy **407**. Visual Studio may still work.
+
+**Fix:** In the solution `NuGet.Config`, comment out or remove the `MORYX Open Source CI Packages` (MyGet) line under `packageSources` (keep `nuget.org`), then start again with `dotnet run --project src/PencilFactory.App`.
+
+More background (why open source can still hit a proxy): [Troubleshooting](troubleshooting.md#nuget-restore-fails-nu1301--myget--proxy-407-dotnet-run-fails-visual-studio-works).
 
 ### Encountering database issues after setup section
 

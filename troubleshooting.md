@@ -20,6 +20,14 @@ Cross-chapter quick reference for common MORYX ADP pitfalls. Prefer the chapter-
 
 **Fix:** On the red name, use Visual Studio Quick Actions (`Ctrl + .`) and add the using it offers. If nothing useful appears, the project usually does not reference the assembly yet: add the ProjectReference or NuGet package the chapter just introduced, then rebuild.
 
+## NuGet restore fails (NU1301 / MyGet / proxy 407): `dotnet run` fails, Visual Studio works
+
+**Problem:** `dotnet run` (which also restores packages) fails on MyGet (`moryx-oss-ci`) with **NU1301** / proxy **407**. Visual Studio may still work (system proxy / package cache).
+
+**Why (even though MORYX is open source):** Open source means the code/packages are public, it **doesn't** mean every download URL is allowed through a company proxy. The template lists nuget.org **and** a MyGet CI feed, proxies often block or challenge MyGet (407). Stable ADP packages come from **nuget.org**, MyGet is optional CI and not required here.
+
+**Fix:** In the solution `NuGet.Config`, **comment out or remove** the MyGet line under `packageSources` (keep `nuget.org`). Then start again with `dotnet run --project src/PencilFactory.App` (restore runs automatically). Also in [Chapter 1: NuGet restore / proxy (MyGet)](chapter-01-basics.md#nuget-restore--proxy-myget).
+
 ## Databases not created / UI cannot connect
 
 **Problem:** Products or Resources show connection errors. Modules stay down until databases exist.
