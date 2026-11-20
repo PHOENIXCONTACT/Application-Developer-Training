@@ -40,7 +40,7 @@ If nothing useful appears, add the ProjectReference or NuGet package from the ch
 
 **Problem:** Products or Resources show connection errors. Modules stay down until databases exist.
 
-**Check:** Command Center -> Databases. Did `moryx exec post-setup` run while the app was running?
+**Check:** Command Center → Databases. Did `moryx exec post-setup` run while the app was running?
 
 **Fix:** Create any missing databases, then reincarnate the modules or restart the app ([Chapter 1](chapter-01-basics.md#encountering-database-issues-after-setup-section)). Use Erase + Create only for an intentional clean seed ([Chapter 9](chapter-09-initializer-importer.md)).
 
@@ -56,7 +56,7 @@ If nothing useful appears, add the ProjectReference or NuGet package from the ch
 
 **Problem:** Browser or `moryx exec post-setup` cannot reach the app.
 
-**Check:** The training default is `https://localhost:5000` (`PencilFactory.App` -> `Properties/launchSettings.json` -> `applicationUrl`). Confirm the app is running and that URL opens in the browser.
+**Check:** The training default is `https://localhost:5000` (`PencilFactory.App` → `Properties/launchSettings.json` → `applicationUrl`). Confirm the app is running and that URL opens in the browser.
 
 **Fix:** If you changed the port in `launchSettings.json`, open that URL instead and pass the same URL to post-setup with `--endpoint <URL>`. If the port looks correct but nothing answers, clean and rebuild, then start again.
 
@@ -79,7 +79,7 @@ If nothing useful appears, add the ProjectReference or NuGet package from the ch
 
 **Check:** Default recipe on the product, workplan connections, cell has Instructor and/or Driver, capabilities match, cell publishes `ReadyToWork` / completes activities. Worker Support shows the correct display.
 
-**Fix:** Walk Product -> Recipe -> Workplan -> Activity -> Cell ([Chapter 1](chapter-01-basics.md#orders-blocked--production-does-not-start)). Pack products need their own recipe/workplan ([Chapter 8](chapter-08-packing.md)). Orders from the ERP adapter still need release/start in the Orders UI ([Chapter 10](chapter-10-module-adapter.md)).
+**Fix:** Walk Product → Recipe → Workplan → Activity → Cell ([Chapter 1](chapter-01-basics.md#orders-blocked--production-does-not-start)). Pack products need their own recipe/workplan ([Chapter 8](chapter-08-packing.md)). Orders from the ERP adapter still need release/start in the Orders UI ([Chapter 10](chapter-10-module-adapter.md)).
 
 ## ProcessEngine routing / no matching cell
 

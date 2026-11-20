@@ -517,7 +517,7 @@ Start an order that requires a ColorChange setup and watch `CellState`: Idle, th
 
 ### Check your progress
 
-* `CellState` moves Idle -> Setup -> Idle -> Production -> Idle (Production may be brief under short simulator times)
+* `CellState` moves Idle → Setup → Idle → Production → Idle (Production may be brief under short simulator times)
 
 ## Checklist
 

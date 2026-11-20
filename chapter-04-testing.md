@@ -58,7 +58,7 @@ That scaffolds the activity, cell project and related files.
 
 ## TestingCell (mirror Colorizing)
 
-> **Concept:** The machine handshake stays the same: Ready -> ProcessStart -> ProcessResult -> reset ProcessStart. What changes is the domain: `TestingActivity` and `TestingActivityResults`.
+> **Concept:** The machine handshake stays the same: Ready → ProcessStart → ProcessResult → reset ProcessStart. What changes is the domain: `TestingActivity` and `TestingActivityResults`.
 
 Open `ColorizingCell` next to `TestingCell`. Implement Testing so that:
 
@@ -101,7 +101,7 @@ Simulation applies the result after the execution time (no Success/Failed click)
 
 ![Step-by-step testing flow](./chapter-04/testing-step-by-step-flow.png)
 
-In short: the simulator calls `Ready` first -> the cell Pulls work -> the Process Engine sends `TestingActivity` -> the cell sets `ProcessStart` -> after the fake run, `Result` / `ProcessResult` arrives -> the cell resets `ProcessStart` and reports `ActivityCompleted`. Same handshake as Colorizing.
+In short: the simulator calls `Ready` first → the cell Pulls work → the Process Engine sends `TestingActivity` → the cell sets `ProcessStart` → after the fake run, `Result` / `ProcessResult` arrives → the cell resets `ProcessStart` and reports `ActivityCompleted`. Same handshake as Colorizing.
 
 ### Check your progress
 
@@ -143,7 +143,7 @@ Start an order. Under **Processes** you see the running activities and selected 
 
 ### Check your progress
 
-* Workplan: Assembling -> Colorizing -> Testing (Failed routed correctly)
+* Workplan: Assembling → Colorizing → Testing (Failed routed correctly)
 * A full order shows `TestingActivity` in Processes with Success or Failed from the simulator
 
 Finish Testing before chapters 5+, they assume Testing is already in the workplan.
@@ -344,8 +344,8 @@ The CLI can leave placeholder names (`Some`, `MyApplication`) or skip wiring the
 
 **1. Add the project to the solution and to the App**
 
-- Solution -> right-click -> **Add** -> **Existing Project** -> `PencilFactory.Resources.Testing.csproj`
-- Right-click **PencilFactory.App** -> **Add** -> **Project Reference** -> check **PencilFactory.Resources.Testing**
+- Solution → right-click → **Add** → **Existing Project** → `PencilFactory.Resources.Testing.csproj`
+- Right-click **PencilFactory.App** → **Add** → **Project Reference** → check **PencilFactory.Resources.Testing**
 
 **2. Fix the resource project reference**
 

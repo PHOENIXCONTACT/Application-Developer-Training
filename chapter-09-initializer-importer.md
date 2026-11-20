@@ -443,7 +443,7 @@ private static ProductionRecipe CreateRecipe(string name, ProductType product, W
 
 #### Create Graphite Pencil Workplan
 
-The connectors encode the same Assembling -> Colorizing -> Testing path you already tested in the UI.
+The connectors encode the same Assembling → Colorizing → Testing path you already tested in the UI.
 
 ```csharp
 private static Workplan CreateGraphitePencilWorkplan()
@@ -561,13 +561,13 @@ The initializer creates a resource graph for ResourceManager to save. The import
 
 No second database clear needed. With the default import in place, check:
 
-1. Which products use the pencil workplan and which use the packing workplan? Confirm under Products -> Recipes.
+1. Which products use the pencil workplan and which use the packing workplan? Confirm under Products → Recipes.
 2. Stations A-1, C-1, T-1, P-1 appear in the Factory Monitor. Did the **initializer** or the **importer** create them?
 
 <details>
 <summary>Hint</summary>
 
-Initializer -> resources and layout. Importer -> products, workplans, recipes.
+Initializer → resources and layout. Importer → products, workplans, recipes.
 
 </details>
 

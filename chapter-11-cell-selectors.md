@@ -516,7 +516,7 @@ Note: Under the "Processes" view you can track which cell the ProcessEngine choo
 
 ### Why Manual is hard to hit in this line
 
-Each pencil runs the workplan **in sequence**: Assembling -> Colorizing -> Testing.
+Each pencil runs the workplan **in sequence**: Assembling → Colorizing → Testing.
 With **one** Assembling cell and **one** Colorizing cell, pieces rarely pile up at
 Testing at the same time. Auto cells T-1/T-2 usually finish before a third Testing
 activity is waiting, so the Optimizer threshold is almost never reached and T-3
@@ -528,9 +528,9 @@ The bottleneck before Testing is often Colorizing (default ~2400 ms). If Coloriz
 is much faster, more pencils reach Testing while T-1/T-2 are still busy. Then the
 Optimizer can include Manual.
 
-In **Command Center** -> **MachineSimulator** -> **CONFIGURATION**:
+In **Command Center** → **MachineSimulator** → **CONFIGURATION**:
 
-1. **Specific execution times** -> add / set:
+1. **Specific execution times** → add / set:
    - **Activity:** `PencilFactory.Activities.ColorizingStep.ColorizingActivity`
    - **ExecutionTime:** `500` ms
    - **CellId:** `0` (all cells)

@@ -190,8 +190,8 @@ Open `GraphitePencilType` in the `PencilFactory` project under the `Products` fo
 > * [`DataMember`](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute):
 >   store the property with the product data
 >
-> Use **both** on Color and Hardness. Missing `EntrySerialize` -> nothing to edit in the UI.
-> Missing `DataMember` -> a saved UI value may vanish after restart.
+> Use **both** on Color and Hardness. Missing `EntrySerialize` → nothing to edit in the UI.
+> Missing `DataMember` → a saved UI value may vanish after restart.
 >
 > If something is underlined red, use Quick Actions (`Ctrl + .`) to add the `using` (e.g. `Moryx.Serialization` for `EntrySerialize`). More examples: [Missing usings](troubleshooting.md#missing-usings--types-do-not-compile).
 
@@ -305,9 +305,9 @@ product of this type (including `100001` / `100002`).
 
 **Then run** (observe on any GraphitePencil product, for example `100001`):
 
-1. Both attributes present -> set Color, save, restart -> value still there.
-2. Remove only `[EntrySerialize]` on `Color` -> rebuild, restart -> open the product. Is Color still editable? Put the attribute back, rebuild, restart.
-3. Remove only `[DataMember]` on `Color` -> rebuild, restart -> change Color, save, restart again. Is the new value still there? Put the attribute back, rebuild, restart and set Color back to the intended training values (Green on `100001`, Brown on `100002`).
+1. Both attributes present → set Color, save, restart → value still there.
+2. Remove only `[EntrySerialize]` on `Color` → rebuild, restart → open the product. Is Color still editable? Put the attribute back, rebuild, restart.
+3. Remove only `[DataMember]` on `Color` → rebuild, restart → change Color, save, restart again. Is the new value still there? Put the attribute back, rebuild, restart and set Color back to the intended training values (Green on `100001`, Brown on `100002`).
 
 <details>
 <summary>Expected outcome</summary>
@@ -569,7 +569,7 @@ created, you need a *Recipe*.
 
 Go to *Products* and select the *Product* you want to produce, that is the
 *GraphitePencil*. Click on the *Recipes* tab and the edit button located on the
-top right corner. Click the *Add Recipe* button, located on the bottom left
+top left corner. Click the *Add Recipe* button, located on the bottom left
 corner to add a new recipe.
 
 ![Add a new recipe](./chapter-01/recipe-add-1.png)
@@ -582,7 +582,7 @@ your created workplan `Workplan`.
 * Click on **Create** for the recipe to show up in the products UI.
 * For the recipe to be automatically selected when the product is produced, select
 `Default` Classification.
-* Save your changes by clicking on the save icon located at the top right corner.
+* Save your changes by clicking on the save icon located at the top left corner.
 
 ![Select recipe classification](./chapter-01/recipe-add-3.png)
 
@@ -597,7 +597,7 @@ your created workplan `Workplan`.
 
 To create a new `Order`. Navigate to the *Orders* UI.
 
-* Click on the add button at the top right.
+* Click on the **Create** Button at the top right.
 
 ![Orders](./chapter-01/order-create-1.png)
 

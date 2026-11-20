@@ -22,7 +22,7 @@ By the end of this chapter, you should be able to:
 
 ## Before you start
 
-Finish chapter 6, so Assembling -> Colorizing -> Testing still runs, with setup and cleanup on one ColorizingCell.
+Finish chapter 6, so Assembling → Colorizing → Testing still runs, with setup and cleanup on one ColorizingCell.
 
 Here you only define **what a pack consists of** (pencils + carton) in code and in Products. Building the Packing station comes in chapter 8. At the end of this chapter you only prepare the Packing step files.
 

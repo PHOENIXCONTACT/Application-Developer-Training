@@ -236,7 +236,7 @@ public class SimulatedColorizingDriver : SimulatedInOutDriver
 }
 ```
 
-A `SimulatedInOutDriver` also reports Idle -> Requested -> Executing so the Simulation module can show what the fake machine is doing. After boot it is Idle. When the simulator calls `Ready`, it becomes Requested and raises the Ready input. When the cell sets ProcessStart, it becomes Executing. When ProcessStart goes back to false, it returns to Idle.
+A `SimulatedInOutDriver` also reports Idle → Requested → Executing so the Simulation module can show what the fake machine is doing. After boot it is Idle. When the simulator calls `Ready`, it becomes Requested and raises the Ready input. When the cell sets ProcessStart, it becomes Executing. When ProcessStart goes back to false, it returns to Idle.
 
 ![States of a SimulationDriver](./chapter-02/SimulationStates.png)
 

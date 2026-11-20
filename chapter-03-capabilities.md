@@ -76,7 +76,7 @@ public class ColorizingCell : Cell, IAsyncStateContext
 
 ```
 
-> **Why a backing field?** Persistence restores `_color`. The UI edits `Color`. The setter updates the published capabilities when an operator changes the color. Initialization publishes capabilities from the restored field as well, so routing works after restart. Merge this into the template's `OnInitializeAsync`, keep the Driver setter from chapter 2 as the single subscription point.
+> **Why a backing field?** Persistence restores `_color`. The UI edits `Color`. The setter updates the published capabilities when an operator changes the color. Initialization publishes capabilities from the restored field as well, so routing works after restart. Merge this into the template's `OnInitializeAsync`.
 
 
 For this to work add the property `Color` to the `ColorizingCapabilities` and check if the colors of the provided Capabilities match the ones you need.
@@ -242,8 +242,8 @@ In this way it is not possible to change the printing method using the UI.
 
 > **Concept:** Do not model from the C# property name alone. Ask what you need the value **for**.
 >
-> * **Color in this chapter:** The product has a color **and** only the matching cell may paint it -> bind Color in `Populate` **and** use it in capabilities for routing.
-> * **Hardness in the Practice:** The product has a hardness, but every ColorizingCell can handle every grade -> bind Hardness in `Populate` only. No Hardness in capabilities.
+> * **Color in this chapter:** The product has a color **and** only the matching cell may paint it → bind Color in `Populate` **and** use it in capabilities for routing.
+> * **Hardness in the Practice:** The product has a hardness, but every ColorizingCell can handle every grade → bind Hardness in `Populate` only. No Hardness in capabilities.
 >
 > Quick check:
 >

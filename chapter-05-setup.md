@@ -12,7 +12,7 @@ By the end of this chapter, you should be able to:
 
 * Add a ColorChange **setup** activity and let one ColorizingCell change its paint color
 * Register a SetupTrigger so setup runs automatically when the cell color does not match the product
-* Check that a Brown order does ColorChange first, then Assembling -> Colorizing -> Testing
+* Check that a Brown order does ColorChange first, then Assembling → Colorizing → Testing
 
 ## Where you are in the journey
 
@@ -22,7 +22,7 @@ By the end of this chapter, you should be able to:
 
 ## Before you start
 
-Finish chapter 4 so Assembling -> Colorizing -> Testing runs (including Testing).
+Finish chapter 4 so Assembling → Colorizing → Testing runs (including Testing).
 
 Chapter 3 used one ColorizingCell per color. Here you keep only **one** cell (start as Green). Before coding: what happens to a Brown ColorizingActivity if only a Green cell exists? You will fix that with Setup, not with a second cell.
 
@@ -44,7 +44,7 @@ Chapter 3 used one ColorizingCell per color. Now the other extreme: **one** cell
 > **Concept:** **Setup** is a separate job **before** production. It changes the plant state
 > (here: Color of the ColorizingCell) until capabilities match again. Setup jobs are created by the
 > **SetupProvider** from triggers. They are **not** drawn as normal steps in the production workplan.
-> Production still runs Assembling -> Colorizing -> Testing. Setup only prepares the resource graph.
+> Production still runs Assembling → Colorizing → Testing. Setup only prepares the resource graph.
 
 How a Brown order runs when the cell is still Green (and what happens if the cell is already Brown, or ColorChange fails):
 
@@ -107,7 +107,7 @@ public class ColorizingCapabilities : CapabilitiesBase
             return false;
         }
 
-        // Setup: no specific color required -> any colorizing cell matches
+        // Setup: no specific color required → any colorizing cell matches
         if (Color == null)
         {
             return true;
@@ -433,7 +433,7 @@ Then production runs as before (Assembling, Colorizing, Testing).
 * One ColorizingCell remains (Color starts as Green). VisualInstructor **and** Driver linked
 * Brown order: Worker Support shows ColorChange to Brown **before** Assembling / Colorizing / Testing
 * After Success on ColorChange, Resources UI shows ColorizingCell.Color = Brown, then production runs
-* Control test: cell already Brown -> no setup instruction for a Brown order
+* Control test: cell already Brown → no setup instruction for a Brown order
 
 ## Tip: Simulation success rate
 
