@@ -2,7 +2,7 @@
 
 Too many pencils leave the line unchecked. After Assembling and Colorizing, *Pencilla Inc.* adds Testing as a third station.
 
-Build Testing yourself with the same automatic pattern as Colorizing in [chapter 2](chapter-02-drivers.md). That transfer **is** this chapter's main exercise. Keep Colorizing open as a reference. Use the [reference solution](#reference-solution-only-if-stuck) only if you get stuck.
+Build Testing yourself with the same automatic pattern as Colorizing in [chapter 2](chapter-02-drivers.md). That **transfer** is this chapter's **main exercise**. Keep Colorizing open as a reference. Use the [reference solution](#reference-solution-only-if-stuck) only if you get stuck.
 
 
 > [Table of contents](README.md) | [Previous](chapter-03-capabilities.md) | [Next](chapter-05-setup.md)

@@ -29,11 +29,11 @@ By the end of this chapter, you should be able to:
 
 * Create a MORYX application with the CLI and run it with databases ready
 * Model `ProductType` properties for the UI and persistence, configure AssemblingCell + VisualInstructor
-* Connect products to cells with a Workplan and Recipe, start an Order and confirm the instruction in Worker Support
+* Connect products to cells with a Workplan and Recipe, start an Order and confirm the instruction
 
 ## Where you are in the journey
 
-* **Assembling**: this chapter (manual cell, instructions in Worker Support)
+* **Assembling**: this chapter (manual cell, instructions)
 * Colorizing: chapter 2
 * Testing / Packing: chapters 4 and 7-8
 
@@ -140,7 +140,7 @@ Later chapters add more resource projects the same way. `PencilFactory.App` must
 | ---- | ----- |
 | Projects | `PencilFactory` (`Products/`, `Activities/`), `PencilFactory.Resources.Assembling`, `PencilFactory.App` |
 | Types | `GraphitePencilType`, `PencilColor`, `GraphiteHardness`, `AssemblingCell`, `AssemblingParameters` |
-| UI | Products, Resources, Workplans, Orders, Worker Support |
+| UI | Products, Resources, Workplans, Orders, Instructions |
 
 ### Check your progress
 
@@ -247,6 +247,7 @@ Click on the plus button to open the 'Product Importer' menu. This title may
 sound a bit confusing, but it lets you add new products.
 
 > **Note:** The naming here comes from the fact, that you wouldn't necessarily add products here, but 'import' them from other systems.
+More about product import: [Product Import](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/module-products/product-import.md)
 
 
 ![Import GraphitePencilType](./chapter-01/products-import-graphite.png)
@@ -340,11 +341,11 @@ the first steps to digitalize their factory:
 
 Based on these requirements
 
-* The cell should display a worker support screen to the worker
+* The cell should display an instruction screen to the worker
 * Depending on the workers input (*success*, *failure*) the product either moves
   to the next station or goes into a scrap container
 
-### Add worker support
+### Add instruction
 
 The `AssemblingCell`, which you will find in `PencilFactory.Resources.Assembling`,
 already has an instructor.
@@ -629,7 +630,7 @@ Now the production is running!
 That's it, you should now be able to let the pencils flow through the assembling
 cell.
 
-In order to see the visual instructions, go to the module `Worker Support`.
+In order to see the visual instructions, go to the module `Instructions`.
 Select VisualInstructor as Display, if this is not already done by default.
 You can manually select it by clicking on the Settings icon at the top right.
 
@@ -642,14 +643,14 @@ Use the `SUCCESS` and `FAILED` action to make the products flow through the prod
 ### Check your progress
 
 * Order `000001` is running (or completed) after BEGIN
-* Worker Support shows the Assembling instruction. SUCCESS / FAILED advances the product
+* Instructions shows the Assembling instruction. SUCCESS / FAILED advances the product
 
 ## Checklist
 
 * [ ] `PencilFactory` created with the CLI and running
 * [ ] Products `100001` (Green) and `100002` (Brown) created
 * [ ] AssemblingCell linked to VisualInstructor
-* [ ] Workplan, recipe and first order completed in Worker Support
+* [ ] Workplan, recipe and first order completed in Instructions
 
 ## Summary
 
@@ -663,7 +664,7 @@ You have a running host, persistent product data, a manual cell and a recipe/wor
 
 ## Practice
 
-Create a separate test product `100099`, revision `0`, using the existing `GraphitePencilType`. Create a second workplan with an Assembling task and a different instruction text. Give the test product a Default recipe that points to that workplan. Run one piece in Orders / Worker Support.
+Create a separate test product `100099`, revision `0`, using the existing `GraphitePencilType`. Create a second workplan with an Assembling task and a different instruction text. Give the test product a Default recipe that points to that workplan. Run one piece in Orders.
 
 **Acceptance checks:** the test product shows the new instruction. `100001` and `100002` still use the original recipe/workplan. You did not change AssemblingCell code.
 
@@ -721,7 +722,7 @@ If the issue occurs during the ADP at a later stage due to messing up the order 
 If BEGIN does nothing useful, check in order: recipe Classification is `Default`,
 workplan inputs/outputs are connected, AssemblingCell has a VisualInstructor
 and the cell session methods publish `ReadyToWork` / `ActivityCompleted` as above.
-Also confirm Worker Support is showing the VisualInstructor display.
+Also confirm that the instructions module is showing the VisualInstructor display.
 
 ### I cannot find a resource in the add dialog
 
