@@ -628,7 +628,7 @@ Threshold **1** lets the manual cell in sooner when Testing is busy. Threshold *
 | Always same auto cell | LoadBalancer not configured or SortOrder before Optimizer incorrectly |
 | Worker Support shows wrong / overlapping instructions when several orders run | Several manual cells still share **one** VisualInstructor. With MaxRunningOperations > 1 they can push instructions to the same display. Give Assembling, Colorizing, Manual Testing and Packing each their own instructor (as in the initializer change above) |
 | Selectors have no effect | ProcessEngine not saved/restarted, wrong plugin names |
-| No Testing cell at all | Capabilities/`ProvidedBy` broken, see [Troubleshooting](troubleshooting.md#processengine-routing-no-matching-cell) |
+| No Testing cell at all | Capabilities/`ProvidedBy` broken, see [Troubleshooting](troubleshooting.md#processengine-routing--no-matching-cell) |
 
 See also [Troubleshooting](troubleshooting.md) and [Help](README.md#help).
 

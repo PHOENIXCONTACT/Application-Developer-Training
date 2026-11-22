@@ -76,7 +76,7 @@ in the following command:
 moryx new PencilFactory --steps Assembling --products GraphitePencil
 ```
 
-> **Note:** This training uses a simplified application template tailored to this scenario. For real-world applications you would usually pick a different default setup or customize it (see the [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or `moryx --help`).
+> **Note:** Without `--template` / `--branch`, `moryx new` uses the CLI's default application template ([MORYX-Template](https://github.com/PHOENIXCONTACT/MORYX-Template), branch `machine`). For real-world applications you may pick a different template or customize it (see the [Moryx.Cli README](https://www.nuget.org/packages/Moryx.Cli#readme-body-tab) or `moryx --help`).
 
 This should not only leave you with a solution `PencilFactory.sln` inside
 the new folder `PencilFactory`, it also does some initial configuration.
@@ -199,11 +199,9 @@ Add these properties:
 
 ```cs
 [EntrySerialize]
-[DataMember]
 public PencilColor Color { get; set; }
 
 [EntrySerialize]
-[DataMember]
 public GraphiteHardness Hardness { get; set; }
 ```
 
@@ -352,7 +350,7 @@ already has an instructor.
 
 ``` cs
 [ResourceReference(ResourceRelationType.Extension)]
-public IVisualInstructor VisualInstructor { get, set, }
+public IVisualInstructor VisualInstructor { get; set; }
 ```
 
 `IVisualInstructor`
@@ -384,7 +382,7 @@ In the following dialog it is ok to go with just the typename as the cell
 identifier.
 
 If you select the *AssemblingCell* and click the edit button, you can assign
-the previously created *VisualInstructor* to its *Instructor* property.
+the previously created *VisualInstructor* to its *VisualInstructor* property.
 
 ![Create resources](./chapter-01/assign-instructor.png)
 
@@ -691,7 +689,7 @@ Common problems in this chapter:
 
 **Fix:** In the solution `NuGet.Config`, comment out or remove the `MORYX Open Source CI Packages` (MyGet) line under `packageSources` (keep `nuget.org`), then start again with `dotnet run --project src/PencilFactory.App`.
 
-More background (why open source can still hit a proxy): [Troubleshooting](troubleshooting.md#nuget-restore-fails-nu1301--myget--proxy-407-dotnet-run-fails-visual-studio-works).
+More background (why open source can still hit a proxy): [Troubleshooting](troubleshooting.md#nuget-restore-fails-nu1301--myget--proxy-407-dotnet-run-fails).
 
 ### Encountering database issues after setup section
 

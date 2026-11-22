@@ -63,11 +63,11 @@ That scaffolds the activity, cell project and related files.
 Open `ColorizingCell` next to `TestingCell`. Implement Testing so that:
 
 1. **Constants** for `ProcessStart`, `ProcessResult` and `Ready` match Colorizing (same strings).
-2. **`Driver`** is an `IInOutDriver` with subscribe/unsubscribe on `InputChanged` in the setter.
-3. **`ProcessEngineAttached`** starts a Production session with `ReadyToWorkType.Push`.
+2. **`Driver`** is an `IInOutDriver` with subscribe/unsubscribe on `InputChanged` in the setter. Remove the generated subscription from `OnInitializeAsync`.
+3. **`ProcessEngineAttached`** starts a Production session with `ReadyToWorkType.Pull` only if `Ready` is already set.
 4. **`StartActivity`** sets `Driver.Output[ProcessStart] = true` for a `TestingActivity`.
 5. **`ProcessAborting`** clears `ProcessStart` and reports Failed with `TestingActivityResults`.
-6. **`SequenceCompleted`** publishes ReadyToWork (Push).
+6. **`SequenceCompleted`** publishes ReadyToWork (Pull) only while `Ready` is still set.
 7. **`OnInputChanged`**
    * On `Ready == true` (and not in an ActivityStart): ReadyToWork **Pull**
    * On `ProcessResult` during ActivityStart: set `ProcessStart = false`, read the result, publish Success or Failed via `TestingActivityResults`
@@ -113,7 +113,7 @@ Use these only after you tried mirroring Colorizing yourself:
 
 1. Signal strings must match between cell and driver (`"Ready"`, `"ProcessStart"`, `"ProcessResult"`).
 2. After `ProcessResult`, reset `ProcessStart` to `false` or the next cycle may hang.
-3. Subscribe and unsubscribe in the Driver setter (same bug class as chapter 2).
+3. Subscribe and unsubscribe in the Driver setter only, not also in `OnInitializeAsync` (same bug class as chapter 2).
 4. Fix CLI leftovers before chasing handshake bugs.
 5. Re-read chapter 2 (`OnInputChanged`, `SimulatedColorizingDriver`) if a branch is unclear.
 6. If you still cannot finish, open the [Reference solution](#reference-solution-only-if-stuck) so later chapters stay reachable.
@@ -178,9 +178,20 @@ public IInOutDriver Driver
     }
 }
 
+protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
+{
+    await base.OnInitializeAsync(cancellationToken);
+    Capabilities = new TestingCapabilities { Value = Value };
+}
+
 protected override IEnumerable<Session> ProcessEngineAttached()
 {
-    yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
+    if (Driver?.Input[Ready] is true)
+    {
+        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+        _currentSession = rtw;
+        yield return rtw;
+    }
 }
 
 public override void StartActivity(ActivityStart activityStart)
@@ -210,9 +221,12 @@ public override void SequenceCompleted(SequenceCompleted completed)
 {
     _currentSession = completed;
 
-    var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
-    PublishReadyToWork(rtw);
-    _currentSession = rtw;
+    if (Driver?.Input[Ready] is true)
+    {
+        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+        _currentSession = rtw;
+        PublishReadyToWork(rtw);
+    }
 }
 
 private void OnInputChanged(object sender, InputChangedEventArgs args)

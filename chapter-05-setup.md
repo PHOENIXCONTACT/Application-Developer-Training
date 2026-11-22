@@ -218,14 +218,20 @@ public class ColorChangeTask : TaskStep<ColorChangeActivity, ColorChangeParamete
 The ColorizingCell must offer setup sessions and run ColorChange like a manual
 instruction, similar to Assembling, but with `ActivityClassification.Setup`.
 
-
 ### Setup and production sessions
+
+Setup is confirmed by a worker, so the cell can always offer a **Push** setup session, like the
+AssemblingCell. Production stays driven by the machine's `Ready` as in chapter 2.
 
 ```cs
 protected override IEnumerable<Session> ProcessEngineAttached()
 {
     yield return Session.StartSession(ActivityClassification.Setup, ReadyToWorkType.Push);
-    yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
+
+    if (Driver?.Input[Ready] is true)
+    {
+        yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+    }
 }
 ```
 
@@ -286,8 +292,10 @@ private void ColorChangeCompleted(int instructionResult, ActivityStart activity)
 
 ### SequenceCompleted: Setup vs Production
 
-After setup, offer a setup session again. After production, offer production again,
-otherwise the cell hangs.
+After setup, offer a setup session again, otherwise the next ColorChange never starts. For
+production, keep the chapter 2 rule: offer production again only while the machine still signals `Ready`.
+Check that after setup as well: a `Ready` that arrived while ColorChange was running was ignored by
+`OnInputChanged`, so this is the moment to pick it up.
 
 ```cs
 public override void SequenceCompleted(SequenceCompleted completed)
@@ -299,12 +307,14 @@ public override void SequenceCompleted(SequenceCompleted completed)
         var setupRtw = Session.StartSession(ActivityClassification.Setup, ReadyToWorkType.Push);
         PublishReadyToWork(setupRtw);
         _currentSession = setupRtw;
-        return;
     }
 
-    var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
-    PublishReadyToWork(rtw);
-    _currentSession = rtw;
+    if (Driver?.Input[Ready] is true)
+    {
+        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+        _currentSession = rtw;
+        PublishReadyToWork(rtw);
+    }
 }
 ```
 

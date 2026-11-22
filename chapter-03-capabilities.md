@@ -64,11 +64,6 @@ public class ColorizingCell : Cell, IAsyncStateContext
         await base.OnInitializeAsync(cancellationToken);
 
         Capabilities = new ColorizingCapabilities { Color = _color };
-
-        if (Driver != null)
-        {
-            Driver.Input.InputChanged += OnInputChanged;
-        }
     }
 
     ...

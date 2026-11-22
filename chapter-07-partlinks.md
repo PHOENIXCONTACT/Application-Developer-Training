@@ -88,7 +88,6 @@ public enum CartonColor
 public class PencilCartonType : ProductType
 {
     [EntrySerialize]
-    [DataMember]
     public CartonColor Color { get; set; }
 
     protected override ProductInstance Instantiate()
@@ -102,7 +101,7 @@ public class PencilCartonType : ProductType
 public class PencilCartonInstance : ProductInstance<PencilCartonType> { }
 ```
 
-`[EntrySerialize]` ensures that `Color` appears in the Products UI (like `Color` on the graphite pencil).
+`[EntrySerialize]` ensures that `Color` appears in the Products UI (like `Color` on the graphite pencil). As in chapter 1, no `DataMember` is needed: the ProductManager persists public properties of product types and part links automatically.
 
 Next, the bill of materials: ProductPartLinks connect pack, pencil and carton.
 
@@ -112,7 +111,6 @@ Next, the bill of materials: ProductPartLinks connect pack, pencil and carton.
 public class GraphitePencilPartLink : ProductPartLink<GraphitePencilType>
 {
     [EntrySerialize]
-    [DataMember]
     [Display(Name = "Quantity")]
     public int Quantity { get; set; } = 20;
 }
