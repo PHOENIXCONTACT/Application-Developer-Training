@@ -33,7 +33,6 @@ Below is a list of patterns and basic concepts that MORYX is built upon, but you
 ## Requirements
 
 Install **everything** in this list.  
-A .NET 10 SDK alone is often **not** enough: the training app targets **.NET 10**, but the MORYX CLI is a **.
 
 * [ ] [Git](https://git-scm.com/)
 * [ ] [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
