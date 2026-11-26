@@ -41,6 +41,42 @@ Publish each cell's paint color through [Capabilities](https://github.com/PHOENI
 > The Process Engine matches an activity's `RequiredCapabilities` against cells that *provide* those
 > capabilities. Capabilities are about **routing**, not about filling in instruction text.
 
+> **Concept: `[DataContract]` and `[DataMember]` on resources**
+>
+> As you learned in [chapter 1](chapter-01-basics.md), persistence means saving state to the database so it survives a restart. For resources, MORYX uses [Newtonsoft.Json](https://www.newtonsoft.com/json): each resource is serialized to a JSON string and stored in a column called `ExtensionData`. On startup that JSON is read back and the resource state is restored.
+>
+> **Which members are included in that JSON?** When a class, or any of its base classes, carries [`[DataContract]`](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datacontractattribute), only members explicitly marked with [`[DataMember]`](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute) are saved. Everything else is ignored and resets to its C# default on restart.
+>
+> **The inheritance chain makes this apply to every resource:** `ColorizingCell` inherits `Cell`, which inherits `Resource`. Open `Resource` in Visual Studio (press `F12` on `Cell`, then again on `Resource`) and you will see:
+>
+> ```cs
+> [DataContract, EntrySerialize(EntrySerializeMode.Never)]
+> public abstract class Resource : ...
+> ```
+>
+> Because `[DataContract]` is already on `Resource`, it applies to every class in the chain, including `ColorizingCell`. You do not need to add it yourself. Any field or property you want saved must carry `[DataMember]`.
+>
+> `ProductType` subclasses are handled differently, MORYX saves all their public properties automatically, so `[DataMember]` was not needed in [chapter 1](chapter-01-basics.md).
+>
+> | Attribute | Controls | On `ProductType` subclass | On resource |
+> |-----------|----------|--------------------------|-------------|
+> | `[EntrySerialize]` | UI visibility | editable in Products UI | editable in Resources UI |
+> | `[DataMember]` | JSON persistence | *not needed*: automatic | *required*: only marked members are saved |
+>
+> You often see both on a resource property when you want it editable **and** saved.
+
+> **Tip: Inspect the database directly**
+>
+> By default MORYX uses a local **SQLite** database. In the Command Center under the **Databases** tab you can see where each database is stored. For example, the `ResourcesContext` uses `./db/ResourcesContext.db`. Alternatively, you can switch to a PostgreSQL database there, just select the PostgreSQL connector and configure host, port, username and password via the UI:
+>
+> ![Command Center: ResourcesContext database location](./chapter-03/resources-db-commandcenter.png)
+>
+> The file is located at `src/PencilFactory.App/db/ResourcesContext.db`. You can open it with a free tool like [DBeaver](https://dbeaver.io/) and browse the resource table directly. Each row is one resource, the `ExtensionData` column contains the JSON that MORYX saved.
+>
+> At this point in the training your resources have no `[DataMember]` fields yet, so most rows will show `{}`. The screenshot below is from a completed training setup, it gives you an idea of what the data looks like later. For example, the ColorizingCell shows `{"_color":1}` once a color has been set:
+>
+> ![DBeaver: ExtensionData column in ResourcesContext.db, example from a completed setup](./chapter-03/resources-db-dbeaver.png)
+
 ```cs
 [ResourceRegistration] 
 public class ColorizingCell : Cell, IAsyncStateContext
@@ -297,7 +333,7 @@ Look at how Color is handled in `ColorizingParameters`. Do not put Hardness into
 | --- | --- |
 | Both colors go to the same cell | Cell `Color` / Capabilities not set, or `RequiredCapabilities` not using `Parameters.Color` |
 | Order stalls: no resource for ColorizingActivity | Missing second cell/driver, or `ProvidedBy` never matches |
-| Color wrong after restart | `DataMember` on backing field vs `EntrySerialize` on property. See the Note above |
+| Color wrong after restart | `[DataMember]` missing on `_color` backing field, without it the value is not saved and resets to the default on restart. See the Concept box above. |
 | Parameter always default | `Populate` not casting to `GraphitePencilType` / `ProductionProcess` correctly |
 
 See also [Troubleshooting](troubleshooting.md) and [Help](README.md#help).

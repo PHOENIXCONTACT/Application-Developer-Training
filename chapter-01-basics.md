@@ -185,12 +185,15 @@ Open `GraphitePencilType` in the `PencilFactory` project under the `Products` fo
 > **Concept:** MORYX does not expose every C# property automatically. You mark members with
 > attributes (metadata). At runtime the framework reads them through reflection.
 >
-> * [`EntrySerialize`](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/framework/serialization/entry-convert.md#entryserialize-attribute):
->   show and edit the property in the Products UI
-> * [`DataMember`](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute):
->   persist a member of a `[DataContract]` type (resources, module configs), **not needed on product types**, where the ProductManager persists all public properties with a setter automatically
+> [`[EntrySerialize]`](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/framework/Serialization/entry-convert.md#entryserialize-attribute) controls whether a property appears in the UI for viewing and editing. Without it, a property exists in C# code but is invisible to the user.
 >
-> On Color and Hardness here: only `[EntrySerialize]` is needed.
+> **Before continuing, what is persistence?** Persistence means saving the current state of an object to the database so it survives a restart. Without persistence, every value an operator sets in the UI would reset to its C# default the next time the app starts.
+>
+> For classes that inherit from `ProductType` (like `GraphitePencilType`), MORYX reads all public properties with a setter via reflection and saves them to the database automatically. You do not need an extra attribute for this.
+>
+> Resources work differently, they require explicit attributes to control what gets saved. You will see exactly how that works in [chapter 3](chapter-03-capabilities.md).
+>
+> → Add `[EntrySerialize]` to Color and Hardness so they appear in the Products editor.
 >
 > If something is underlined red, use Quick Actions (`Ctrl + .`) to add the `using` (e.g. `Moryx.Serialization` for `EntrySerialize`). More examples: [Missing usings](troubleshooting.md#missing-usings--types-do-not-compile).
 
@@ -653,7 +656,7 @@ You have a running host, persistent product data, a manual cell and a recipe/wor
 
 ## Reflect
 
-1. What happens when a product type property has no `EntrySerialize`? What is different for resources and module configs?
+1. What happens when a product type property has no `EntrySerialize`? Does the value still get saved?
 2. Why does SequenceCompleted offer ReadyToWork again?
 3. Which requirement belongs in workplan configuration and which requires cell code?
 
@@ -670,7 +673,7 @@ Keep `100099` if you want. Later chapters rely on `100001` and `100002`.
 <details>
 <summary>Compare your answers after attempting the questions and practice</summary>
 
-1. Without `EntrySerialize`, the property is not visible or editable in the Products UI, but the ProductManager still persists it. On resources and module configs (`[DataContract]` types), `[DataMember]` controls persistence, without it the value is not saved across restarts. `EntrySerialize` controls UI visibility for both.
+1. Without `EntrySerialize`, the property is not visible or editable in the Products UI. The value is still saved, the ProductManager persists all public properties of a ProductType automatically. `EntrySerialize` only controls UI visibility, not persistence.
 2. ProcessEngineAttached offers readiness at the start. After a finished sequence, SequenceCompleted must offer ReadyToWork again so the next piece can start.
 3. Instruction text belongs in the workplan task. Cell code handles ActivityStart, worker completion and ReadyToWork. A second instruction therefore needs a new workplan (and recipe), not a changed AssemblingCell.
 
