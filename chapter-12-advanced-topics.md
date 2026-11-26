@@ -325,7 +325,7 @@ and in the Resources UI you see the state independently of the current workplan 
 In the project folder:
 
 ```powershell
-dotnet moryx add states ColorizingCell --states Idle,Setup,Production
+moryx add states ColorizingCell --states Idle,Setup,Production
 ```
 
 Creates among others `States/ColorizingCellStateBase.cs`, `IdleState.cs`, ... and adds `IAsyncStateContext` to `ColorizingCell`.
@@ -393,7 +393,7 @@ Call `_ = _state?.OnActivityCompletedAsync();` wherever an **activity actually f
 |-------|----------------------------------|
 | `ColorChangeCompleted` (setup via Instructor) | **yes** |
 | `OnInputChanged` when `ProcessResult` completes Colorizing | **yes** |
-| `SequenceCompleted` | **no**, activity is already done. Here you only open a new ReadyToWork |
+| `SequenceCompleted` | **no**, activity is already done. Here you only open a new ReadyToWork (if needed) |
 | `OnInputChanged` for `Ready` (Pull RTW) | **no**, no activity finished |
 
 `ProcessAborting`, when aborting an active activity:

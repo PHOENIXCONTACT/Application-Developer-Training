@@ -97,8 +97,8 @@ public class ColorizingCell : Cell, IAsyncStateContext
 
 **Subgoal: Subscribe to driver input changes**
 
-In order to recognize, when an input changes, subscribe to that in when the driver is set. If you don't also subscribe to the event in the setter of the driver, you will always have to restart the system after changing the driver of a cell.
-Adjust the Driver variable and functions to match the following.
+In order to recognize when an input changes, subscribe to the event when the driver is set. If you only subscribe once during initialization, you will always have to restart the system after changing the driver of a cell.
+Adjust the Driver property to match the following.
 
 ```cs
 [ResourceReference(ResourceRelationType.Driver)]
@@ -122,6 +122,22 @@ public IInOutDriver Driver
 }
 ```
 
+The setter is now the **only** place that subscribes. The generated `OnInitializeAsync` still
+contains a second subscription. **Remove** it, otherwise every input change is handled twice:
+
+```cs
+protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
+{
+    await base.OnInitializeAsync(cancellationToken);
+    Capabilities = new ColorizingCapabilities { Value = Value };
+
+    // Remove this block, the Driver setter already subscribed:
+    // if (Driver != null)
+    // {
+    //     Driver.Input.InputChanged += OnInputChanged;
+    // }
+}
+```
 
 **Subgoal: On Ready, publish ReadyToWork (Pull)**
 
@@ -198,25 +214,43 @@ public override void ProcessAborting(Activity affectedActivity)
 }
 ```
 
-The `SequenceCompleted` can be implemented in the same way as in the AssemblingCell.
+`SequenceCompleted` and `ProcessEngineAttached` differ from the AssemblingCell. The AssemblingCell always offers a **Push** ReadyToWork, because a worker can take the next piece at any time.  
+Here the **machine** decides when work may start: it raises `Ready`.
+A Push ReadyToWork would let the Process Engine start an activity (and set `ProcessStart`) before the machine signalled `Ready`.
+
+> **Concept:** `ReadyToWorkType.Pull` asks "is there work for me **now**?".
+> The Process Engine answers immediately with `ActivityStart` or, if nothing matches, with `SequenceCompleted`.
+> `ReadyToWorkType.Push` says "send me work as soon as there is some".
+> The Process Engine keeps it until an activity matches.
+
+So the cell only offers work while the machine signals `Ready`.
 
 ```cs
 public override void SequenceCompleted(SequenceCompleted completed)
 {
     _currentSession = completed;
 
-    var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
-    PublishReadyToWork(rtw);
-    _currentSession = rtw;
+    // Machine still waits for work: pull the next matching activity from the Process Engine
+    if (Driver?.Input[Ready] is true)
+    {
+        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+        _currentSession = rtw;
+        PublishReadyToWork(rtw);
+    }
 }
 ```
 
-The same applies for `ProcessEngineAttached`.
+The same rule applies to `ProcessEngineAttached`: only offer work if the machine already signals `Ready`.
 
 ```cs
 protected override IEnumerable<Session> ProcessEngineAttached()
 {
-    yield return Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Push);
+    if (Driver?.Input[Ready] is true)
+    {
+        var rtw = Session.StartSession(ActivityClassification.Production, ReadyToWorkType.Pull);
+        _currentSession = rtw;
+        yield return rtw;
+    }
 }
 ```
 
@@ -314,7 +348,7 @@ Assembling still needs Worker Support. Colorizing should complete through the si
 ## Checklist
 
 * [ ] Colorizing step added and `Moryx.Drivers.Simulation` referenced
-* [ ] `ColorizingCell` talks to the driver (subscribe in the setter, `OnInputChanged`, StartActivity / SequenceCompleted)
+* [ ] `ColorizingCell` talks to the driver (subscribe only in the setter, `OnInputChanged`, StartActivity / SequenceCompleted)
 * [ ] `SimulatedColorizingDriver` implemented (`Ready`, `OnOutputSet`, `Result`)
 * [ ] Driver linked on the cell in Resources
 * [ ] Workplan Assembling + Colorizing runs for both products
@@ -344,9 +378,9 @@ Prove why ProcessStart must be cleared after a result:
 <details>
 <summary>Compare your answers after attempting the questions and practice</summary>
 
-1. Keep the cell logic: listen to `InputChanged`, request work on Ready, set and reset ProcessStart, complete on ProcessResult and publish Push after a sequence. You do not need the simulation methods `Ready` / `Result` / `OnOutputSet` on a real driver. Configure the real connection in Resources. See [OPC UA driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/driver-opc-ua/index.md) or [MQTT driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/driver-mqtt/driver-mqtt.md) if your machine uses those protocols.
+1. Keep the cell logic: listen to `InputChanged`, request work on Ready, set and reset ProcessStart, complete on ProcessResult and request work again after a sequence only while Ready is still set. You do not need the simulation methods `Ready` / `Result` / `OnOutputSet` on a real driver. Configure the real connection in Resources. See [OPC UA driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/driver-opc-ua/index.md) or [MQTT driver](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/driver-mqtt/driver-mqtt.md) if your machine uses those protocols.
 2. Many machines need ProcessStart to go false and then true again for the next product. In this simulator, clearing ProcessStart also returns the state to Idle. Your practice run should match that.
-3. Use Pull when Ready becomes true in `OnInputChanged` (ask for work now). Use Push in `ProcessEngineAttached` and `SequenceCompleted` (say that the cell can take work when something is available).
+3. Use Pull when Ready becomes true in `OnInputChanged` (ask for work now). `ProcessEngineAttached` and `SequenceCompleted` should only re-request, if the machine **still** signals Ready. Without Ready the cell offers no work, so the Process Engine never starts an activity on a machine that is not ready.
 
 </details>
 
@@ -355,6 +389,8 @@ Prove why ProcessStart must be cleared after a result:
 | Symptom | Likely cause |
 | --- | --- |
 | Driver change in UI has no effect until full restart | `InputChanged` not subscribed/unsubscribed in the Driver setter |
+| Two ReadyToWork per `Ready`, cell gets a second activity while busy | `InputChanged` is still also subscribed in the generated `OnInitializeAsync`. Remove that block |
+| Process Engine starts Colorizing before the machine is `Ready` | Cell offers Push (without `Ready`) (in `ProcessEngineAttached` / `SequenceCompleted`) |
 | Cell never sees Ready / ProcessResult | `RaiseInputChanged` without matching **key and value**, or wrong constant names |
 | Simulation stuck / next cycle never starts | `ProcessStart` not reset to `false` after `ProcessResult` |
 | Colorizing never advances | Driver not linked, Simulation package missing, workplan path not connected |

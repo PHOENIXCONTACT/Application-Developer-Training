@@ -62,16 +62,16 @@ If nothing useful appears, add the ProjectReference or NuGet package from the ch
 
 ## EntrySerialize vs DataMember
 
-**Problem:** Property missing in the UI, or visible but lost after restart (or the reverse).
+**Problem:** Property missing in the UI, or visible but lost after restart.
 
 **Check:**
 
 | Want | Need |
 | ---- | ---- |
-| Visible / editable in UI | `[EntrySerialize]` |
-| Persisted in the database | `[DataMember]` |
+| Visible / editable in UI | `[EntrySerialize]` (once one property of a class has it, only marked properties are shown) |
+| Persisted: resources, module/plugin configs (`[DataContract]` types) | `[DataMember]` |
 
-**Fix:** Use both when the field should appear and survive restarts. On Colorizing `Color`, put `DataMember` on the backing field and `EntrySerialize` on the property so the setter updates capabilities. [Glossary](glossary.md#entryserialize), [Chapter 1](chapter-01-basics.md#quick-experiment-entryserialize-vs-datamember), [Chapter 3](chapter-03-capabilities.md).
+**Fix:** On products, add `EntrySerialize` to every property that should be editable. On resources and configs, use both when the field should appear and survive restarts. On Colorizing `Color`, put `DataMember` on the backing field and `EntrySerialize` on the property so the setter updates capabilities. [Glossary](glossary.md#entryserialize), [Chapter 1](chapter-01-basics.md#quick-experiment-entryserialize), [Chapter 3](chapter-03-capabilities.md).
 
 ## Orders blocked / production does not start
 
@@ -93,7 +93,7 @@ If nothing useful appears, add the ProjectReference or NuGet package from the ch
 
 **Problem:** Linking or changing a driver in the UI does nothing until a full restart. Ready / ProcessResult ignored.
 
-**Check:** `Driver` setter subscribes/unsubscribes `InputChanged`. Input key names and values match what the simulator raises.
+**Check:** `Driver` setter subscribes/unsubscribes `InputChanged`, and `OnInitializeAsync` does **not** subscribe a second time (otherwise every input is handled twice). Input key names and values match what the simulator raises.
 
 **Fix:** [Chapter 2](chapter-02-drivers.md#troubleshooting), [Chapter 4](chapter-04-testing.md#troubleshooting).
 
