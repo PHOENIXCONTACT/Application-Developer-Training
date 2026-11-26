@@ -188,10 +188,9 @@ Open `GraphitePencilType` in the `PencilFactory` project under the `Products` fo
 > * [`EntrySerialize`](https://github.com/PHOENIXCONTACT/MORYX-Framework/blob/main/docs/articles/framework/serialization/entry-convert.md#entryserialize-attribute):
 >   show and edit the property in the Products UI
 > * [`DataMember`](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute):
->   store the property with the product data
+>   persist a member of a `[DataContract]` type (resources, module configs), **not needed on product types**, where the ProductManager persists all public properties with a setter automatically
 >
-> Use **both** on Color and Hardness. Missing `EntrySerialize` → nothing to edit in the UI.
-> Missing `DataMember` → a saved UI value may vanish after restart.
+> On Color and Hardness here: only `[EntrySerialize]` is needed.
 >
 > If something is underlined red, use Quick Actions (`Ctrl + .`) to add the `using` (e.g. `Moryx.Serialization` for `EntrySerialize`). More examples: [Missing usings](troubleshooting.md#missing-usings--types-do-not-compile).
 
@@ -289,28 +288,26 @@ Now you should have your products `100001-00 Green Pencil GP-1B` and
 * Products `100001` (Green / B) and `100002` (Brown / HB) exist and show Color and Hardness after save
 * After an app restart, those property values are still there
 
-### Quick experiment: EntrySerialize vs DataMember
+### Quick experiment: EntrySerialize
 
-You already know from the Concept box what each attribute is for. Now prove it.
+You already know from the Concept box what `EntrySerialize` does. Now prove it.
 
 Important: you edit attributes on `GraphitePencilType`. That change applies to **every**
 product of this type (including `100001` / `100002`).
 
 **First, guess:**
 
-* If only `DataMember` is missing: can you still edit Color in the UI? Will a new value survive a restart?
-* If only `EntrySerialize` is missing: will Color still appear in the product editor?
+* If `EntrySerialize` is missing: will Color still appear in the product editor? Will a saved value survive a restart?
 
 **Then run** (observe on any GraphitePencil product, for example `100001`):
 
-1. Both attributes present → set Color, save, restart → value still there.
-2. Remove only `[EntrySerialize]` on `Color` → rebuild, restart → open the product. Is Color still editable? Put the attribute back, rebuild, restart.
-3. Remove only `[DataMember]` on `Color` → rebuild, restart → change Color, save, restart again. Is the new value still there? Put the attribute back, rebuild, restart and set Color back to the intended training values (Green on `100001`, Brown on `100002`).
+1. `EntrySerialize` present → set Color, save, restart → value still there.
+2. Remove `[EntrySerialize]` on `Color` → rebuild, restart → open the product. Is Color still editable? Put the attribute back, rebuild, restart and set Color back to the intended training values (Green on `100001`, Brown on `100002`).
 
 <details>
 <summary>Expected outcome</summary>
 
-Without `EntrySerialize`, Color disappears from the editor (or is not editable) for all GraphitePencil products. Without `DataMember`, you may still edit Color, but the change does not stick after restart. That is why Color and Hardness keep both attributes for the rest of the training.
+Without `EntrySerialize`, Color disappears from the editor (or is not editable) for all GraphitePencil products. The ProductManager still persists the value regardless, `EntrySerialize` only controls UI visibility, not persistence.
 
 </details>
 
@@ -656,7 +653,7 @@ You have a running host, persistent product data, a manual cell and a recipe/wor
 
 ## Reflect
 
-1. What can happen when a property has EntrySerialize but no DataMember? What changes when the attributes are reversed?
+1. What happens when a product type property has no `EntrySerialize`? What is different for resources and module configs?
 2. Why does SequenceCompleted offer ReadyToWork again?
 3. Which requirement belongs in workplan configuration and which requires cell code?
 
@@ -673,7 +670,7 @@ Keep `100099` if you want. Later chapters rely on `100001` and `100002`.
 <details>
 <summary>Compare your answers after attempting the questions and practice</summary>
 
-1. With EntrySerialize but no DataMember, Color can appear in the Products UI, but a new value may be gone after restart. With DataMember but no EntrySerialize, the value can still be stored, but you cannot edit that field in the UI.
+1. Without `EntrySerialize`, the property is not visible or editable in the Products UI, but the ProductManager still persists it. On resources and module configs (`[DataContract]` types), `[DataMember]` controls persistence, without it the value is not saved across restarts. `EntrySerialize` controls UI visibility for both.
 2. ProcessEngineAttached offers readiness at the start. After a finished sequence, SequenceCompleted must offer ReadyToWork again so the next piece can start.
 3. Instruction text belongs in the workplan task. Cell code handles ActivityStart, worker completion and ReadyToWork. A second instruction therefore needs a new workplan (and recipe), not a changed AssemblingCell.
 
