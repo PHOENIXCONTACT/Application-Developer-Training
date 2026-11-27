@@ -1,0 +1,4 @@
+flowchart TD
+    A["ProductType.Color = Green"] --> B["Populate fills ColorizingParameters.Color"]
+    B --> C["RequiredCapabilities = ColorizingCapabilities Color = Green"]
+    C --> D["Process Engine matches ColorizingCell that provides Color = Green"]
